@@ -1,0 +1,10 @@
+:root {
+    -bg: #1f1f23;
+    -panel-bg: #2b2b2f;
+    -text: #ddd;
+}
+
+.app-shell { -fx-background-color: -bg; }
+.page-root { -fx-background-color: -panel-bg; -fx-background-radius: 6; -fx-padding: 18; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8,0,0,2); }
+.top-bar { -fx-background-color: linear-gradient(#333, #222); }
+.top-bar Button { -fx-text-fill: -text; -fx-background-color: transparent; -fx-background-radius: 6; }

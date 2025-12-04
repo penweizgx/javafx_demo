@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.app.controller.FormController" spacing="12" alignment="TOP_CENTER" styleClass="page-root">
+    <VBox fx:id="formArea" spacing="8"/>
+    <Button fx:id="btnSave" text="保存" />
+</VBox>

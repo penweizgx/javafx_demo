@@ -1,0 +1,26 @@
+.root {
+    -fx-font-family: "Segoe UI", "Microsoft YaHei";
+    -fx-font-size: 13px;
+}
+
+/* common */
+.app-shell { -fx-background-color: -bg; }
+.top-bar { -fx-padding: 10; -fx-spacing: 6; -fx-alignment: center-left; }
+.page-root { -fx-padding: 20; }
+
+/* form item */
+.form-item { -fx-padding: 6; -fx-alignment: center-left; }
+.form-error { -fx-text-fill: #d32f2f; -fx-font-size: 11px; }
+.text-field.err { -fx-border-color: #d32f2f; -fx-border-width: 1; }
+
+/* modal & mask */
+.modal-mask { -fx-fill: rgba(0,0,0,0.25); }
+.modal-container { -fx-alignment: center; -fx-padding: 24; }
+
+/* loading overlay */
+.loading-overlay .modal-mask { -fx-fill: rgba(0,0,0,0.2); }
+.loading-overlay { -fx-alignment: center; }
+
+/* toast */
+.toast { -fx-background-color: rgba(0,0,0,0.75); -fx-text-fill: white; -fx-padding: 8 12; -fx-background-radius: 6; -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.25) , 6,0,0,2 ); }
+.toast-layer { -fx-pref-width: 100%; -fx-pref-height: 100%; -fx-padding: 12; }
