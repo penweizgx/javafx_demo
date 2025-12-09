@@ -18,7 +18,7 @@ public class FormItem extends HBox {
 
     public FormItem() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/form_item.fxml"));
-        loader.setRoot(this);
+        loader.setRoot(this);          // ensure FXML content attaches to this HBox
         loader.setController(this);
         try {
             loader.load();

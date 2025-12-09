@@ -33,7 +33,7 @@ public class Router {
     public static void goTo(String pageId, Object params) {
         try {
             if (current != null) backStack.push(current);
-            Parent p = (Parent) ViewManager.load(pageId);
+            Parent p = ViewManager.load(pageId);
             // if controller implements ParamReceiver, call method
             Object controller = p.getProperties().get("fx:controller");
             // expose controller from FXMLLoader: but easier get via lookup - FXML loader sets controller automatically
