@@ -4,10 +4,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox xmlns:fx="http://javafx.com/fxml" spacing="8" styleClass="form-item">
+<!-- Use fx:root so the control class can be the root when loader.setRoot(this) -->
+<fx:root type="HBox" xmlns:fx="http://javafx.com/fxml" spacing="8" styleClass="form-item">
     <Label fx:id="lbl" text="Label" prefWidth="140"/>
     <VBox spacing="4" prefWidth="360">
         <TextField fx:id="input" />
         <Label fx:id="error" text="" visible="false" styleClass="form-error"/>
     </VBox>
-</HBox>
+</fx:root>

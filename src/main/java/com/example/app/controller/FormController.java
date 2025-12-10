@@ -1,16 +1,18 @@
 package com.example.app.controller;
 
 import com.example.app.ViewManager;
-import com.example.app.model.BonusConfig;
-import com.example.app.validator.FieldValidator;
-import com.example.app.validator.FormValidator;
 import com.example.app.component.FormItem;
+import com.example.app.model.Student;
 import com.example.app.service.LoadingService;
 import com.example.app.service.ToastService;
+import com.example.app.validator.FieldValidator;
+import com.example.app.validator.FormValidator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+
+import java.util.regex.Pattern;
 
 public class FormController {
 
@@ -18,17 +20,21 @@ public class FormController {
     @FXML private VBox formArea;
     @FXML private Button btnSave;
 
-    private FormItem minItem;
-    private FormItem maxItem;
-    private FormItem countItem;
+    @FXML private FormItem nameItem;
+    @FXML private FormItem studentIdItem;
+    @FXML private FormItem ageItem;
+    @FXML private FormItem emailItem;
+    @FXML private FormItem phoneItem;
 
     // get services from AppContext or ViewManager (here we'll fetch from AppContext)
     private LoadingService loading;
     private ToastService toast;
 
-    private FieldValidator minVal;
-    private FieldValidator maxVal;
-    private FieldValidator countVal;
+    private FieldValidator nameVal;
+    private FieldValidator studentIdVal;
+    private FieldValidator ageVal;
+    private FieldValidator emailVal;
+    private FieldValidator phoneVal;
     private FormValidator formValidator;
 
     public FormController() {
@@ -41,63 +47,73 @@ public class FormController {
         this.loading = ViewManager.class.getModule() == null ? null : com.example.app.AppContext.get().getService(LoadingService.class);
         this.toast = com.example.app.AppContext.get().getService(ToastService.class);
 
-        // build form components
-        minItem = new FormItem(); minItem.setLabel("最小金额");
-        maxItem = new FormItem(); maxItem.setLabel("最大金额");
-        countItem = new FormItem(); countItem.setLabel("数量");
+        // initialize labels & sample values (components declared in FXML)
+        nameItem.setLabel("姓名");
+        studentIdItem.setLabel("学号");
+        ageItem.setLabel("年龄");
+        emailItem.setLabel("邮箱");
+        phoneItem.setLabel("手机号");
 
-        minItem.setValue("1");
-        maxItem.setValue("5");
-        countItem.setValue("100");
-
-        formArea.getChildren().addAll(minItem, maxItem, countItem);
+        nameItem.setValue("张三");
+        studentIdItem.setValue("20240001");
+        ageItem.setValue("18");
+        emailItem.setValue("zhangsan@example.com");
+        phoneItem.setValue("13800138000");
 
         // validators
-        minVal = new FieldValidator(() -> minItem.getValue(), v -> {
+        nameVal = new FieldValidator(nameItem::getValue, v -> {
             if (v == null || v.isBlank()) return "必填";
-            try { Double.parseDouble(v); } catch (Exception e) { return "必须为数字"; }
+            if (v.length() < 2 || v.length() > 30) return "姓名长度需在2-30字符";
             return null;
         });
-        maxVal = new FieldValidator(() -> maxItem.getValue(), v -> {
+        studentIdVal = new FieldValidator(studentIdItem::getValue, v -> {
             if (v == null || v.isBlank()) return "必填";
-            try { Double.parseDouble(v); } catch (Exception e) { return "必须为数字"; }
+            if (!Pattern.compile("^[A-Za-z0-9_-]{4,20}$").matcher(v).matches()) return "学号需为4-20位字母/数字/下划线";
             return null;
         });
-        countVal = new FieldValidator(() -> countItem.getValue(), v -> {
+        ageVal = new FieldValidator(ageItem::getValue, v -> {
             if (v == null || v.isBlank()) return "必填";
-            try { Integer.parseInt(v); } catch (Exception e) { return "必须为整数"; }
+            try {
+                int age = Integer.parseInt(v);
+                if (age < 1 || age > 120) return "年龄需在1-120之间";
+            } catch (Exception e) { return "必须为整数"; }
+            return null;
+        });
+        emailVal = new FieldValidator(emailItem::getValue, v -> {
+            if (v == null || v.isBlank()) return "必填";
+            if (!Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[A-Za-z]{2,}$").matcher(v).matches()) return "邮箱格式不正确";
+            return null;
+        });
+        phoneVal = new FieldValidator(phoneItem::getValue, v -> {
+            if (v == null || v.isBlank()) return "必填";
+            if (!Pattern.compile("^\\d{7,15}$").matcher(v).matches()) return "手机号需为7-15位数字";
             return null;
         });
 
         formValidator = new FormValidator();
-        formValidator.addField(minVal, minItem);
-        formValidator.addField(maxVal, maxItem);
-        formValidator.addField(countVal, countItem);
-
-        // global rule: min <= max
-        formValidator.addGlobalRule(() -> {
-            try {
-                double a = Double.parseDouble(minItem.getValue());
-                double b = Double.parseDouble(maxItem.getValue());
-                return a <= b ? null : "最小金额不能大于最大金额";
-            } catch (Exception ex) { return null; }
-        });
+        formValidator.addField(nameVal, nameItem);
+        formValidator.addField(studentIdVal, studentIdItem);
+        formValidator.addField(ageVal, ageItem);
+        formValidator.addField(emailVal, emailItem);
+        formValidator.addField(phoneVal, phoneItem);
 
         btnSave.setOnAction(e -> onSave());
     }
 
     private void onSave() {
-        formArea.getChildren().forEach(n -> { /* clear errors */ });
         boolean ok = formValidator.validateAll();
         if (!ok) {
             toast.show("表单校验失败，请修正");
             return;
         }
         // gather model
-        double a = Double.parseDouble(minItem.getValue());
-        double b = Double.parseDouble(maxItem.getValue());
-        int c = Integer.parseInt(countItem.getValue());
-        BonusConfig cfg = new BonusConfig(a,b,c);
+        Student student = new Student(
+                nameItem.getValue().trim(),
+                studentIdItem.getValue().trim(),
+                Integer.parseInt(ageItem.getValue().trim()),
+                emailItem.getValue().trim(),
+                phoneItem.getValue().trim()
+        );
 
         // simulate save
         loading.show();
@@ -105,7 +121,7 @@ public class FormController {
             try { Thread.sleep(900); } catch (InterruptedException ignored) {}
             Platform.runLater(() -> {
                 loading.hide();
-                toast.show("保存成功: " + cfg.getMinAmount() + " ~ " + cfg.getMaxAmount() + " x" + cfg.getCount());
+                toast.show("保存成功: " + student.getName() + " / " + student.getStudentId());
             });
         }).start();
     }

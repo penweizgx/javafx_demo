@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import com.example.app.component.FormItem?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.app.controller.FormController" spacing="12" alignment="TOP_CENTER" styleClass="page-root">
-    <VBox fx:id="formArea" spacing="8"/>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.app.controller.FormController"
+      spacing="12" alignment="TOP_CENTER" styleClass="page-root">
+    <VBox fx:id="formArea" spacing="8">
+        <FormItem fx:id="nameItem"/>
+        <FormItem fx:id="studentIdItem"/>
+        <FormItem fx:id="ageItem"/>
+        <FormItem fx:id="emailItem"/>
+        <FormItem fx:id="phoneItem"/>
+    </VBox>
     <Button fx:id="btnSave" text="保存" />
 </VBox>

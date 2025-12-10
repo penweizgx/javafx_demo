@@ -1,26 +1,68 @@
 .root {
     -fx-font-family: "Segoe UI", "Microsoft YaHei";
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
 }
 
 /* common */
-.app-shell { -fx-background-color: -bg; }
-.top-bar { -fx-padding: 10; -fx-spacing: 6; -fx-alignment: center-left; }
-.page-root { -fx-padding: 20; }
+/* rgba(0,0,0,0.75) → #BF000000 */
+.app-shell { -fx-background-color: #BF000000; }
+
+.top-bar {
+    -fx-padding: 10;
+    -fx-spacing: 6;
+    -fx-alignment: center-left;
+}
+
+.page-root {
+    -fx-padding: 20;
+}
 
 /* form item */
-.form-item { -fx-padding: 6; -fx-alignment: center-left; }
-.form-error { -fx-text-fill: #d32f2f; -fx-font-size: 11px; }
-.text-field.err { -fx-border-color: #d32f2f; -fx-border-width: 1; }
+.form-item {
+    -fx-padding: 6;
+    -fx-alignment: center-left;
+}
+
+.form-error {
+    -fx-text-fill: #d32f2f;
+    -fx-font-size: 11;
+}
+
+.text-field.err {
+    -fx-border-color: #d32f2f;
+    -fx-border-width: 1;
+}
 
 /* modal & mask */
-.modal-mask { -fx-fill: rgba(0,0,0,0.25); }
-.modal-container { -fx-alignment: center; -fx-padding: 24; }
+/* rgba(0,0,0,0.25) → #40000000 */
+.modal-mask { -fx-fill: #40000000; }
+
+.modal-container {
+    -fx-alignment: center;
+    -fx-padding: 24;
+}
 
 /* loading overlay */
-.loading-overlay .modal-mask { -fx-fill: rgba(0,0,0,0.2); }
-.loading-overlay { -fx-alignment: center; }
+/* rgba(0,0,0,0.2) → #33000000 */
+.loading-overlay .modal-mask { -fx-fill: #33000000; }
+
+.loading-overlay {
+    -fx-alignment: center;
+}
 
 /* toast */
-.toast { -fx-background-color: rgba(0,0,0,0.75); -fx-text-fill: white; -fx-padding: 8 12; -fx-background-radius: 6; -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.25) , 6,0,0,2 ); }
-.toast-layer { -fx-pref-width: 100%; -fx-pref-height: 100%; -fx-padding: 12; }
+/* rgba(0,0,0,0.75) → #BF000000 */
+/* rgba(0,0,0,0.25) → #40000000 */
+.toast {
+    -fx-background-color: #BF000000;
+    -fx-text-fill: white;
+    -fx-padding: 8 12;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow( gaussian , #40000000 , 6,0,0,2 );
+}
+
+.toast-layer {
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+    -fx-padding: 12;
+}
