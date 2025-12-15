@@ -13,6 +13,13 @@
     -fx-alignment: center-left;
 }
 
+/* 菜单按钮选中状态 */
+.top-bar Button.menu-selected {
+    -fx-background-color: rgba(255, 255, 255, 0.25);
+    -fx-font-weight: bold;
+    -fx-padding: 6 12;
+}
+
 .page-root {
     -fx-padding: 20;
 }
