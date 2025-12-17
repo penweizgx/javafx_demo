@@ -47,10 +47,11 @@ public class MainApp extends Application {
         primaryStage.setTitle("JavaFX Advanced Sample");
         primaryStage.show();
 
-        // init ViewManager & Router
+        // init ViewManager
         ViewManager.init(stackRoot);
-        Router.init(shell.getContentHolder()); // shell exposes a content placeholder
-        Router.goTo("home");
+        
+        // 初始化时打开首页Tab
+        shell.showInitialTab("home");
     }
 
     public static void main(String[] args) { launch(args); }
