@@ -7,11 +7,11 @@
       fx:controller="com.example.app.controller.FormController"
       spacing="12" alignment="TOP_CENTER" styleClass="page-root">
     <VBox fx:id="formArea" spacing="8">
-        <FormItem fx:id="nameItem"/>
-        <FormItem fx:id="studentIdItem"/>
-        <FormItem fx:id="ageItem"/>
-        <FormItem fx:id="emailItem"/>
-        <FormItem fx:id="phoneItem"/>
+        <FormItem fx:id="nameItem" labelText="姓名"/>
+        <FormItem fx:id="studentIdItem" labelText="学号"/>
+        <FormItem fx:id="ageItem"  labelText="年龄"/>
+        <FormItem fx:id="emailItem"  labelText="邮箱"/>
+        <FormItem fx:id="phoneItem"  labelText="手机号"/>
     </VBox>
     <Button fx:id="btnSave" text="保存" />
 </VBox>

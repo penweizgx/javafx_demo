@@ -30,11 +30,6 @@ public class FormController {
     private LoadingService loading;
     private ToastService toast;
 
-    private FieldValidator nameVal;
-    private FieldValidator studentIdVal;
-    private FieldValidator ageVal;
-    private FieldValidator emailVal;
-    private FieldValidator phoneVal;
     private FormValidator formValidator;
 
     public FormController() {
@@ -48,11 +43,7 @@ public class FormController {
         this.toast = com.example.app.AppContext.get().getService(ToastService.class);
 
         // initialize labels & sample values (components declared in FXML)
-        nameItem.setLabel("姓名");
-        studentIdItem.setLabel("学号");
-        ageItem.setLabel("年龄");
-        emailItem.setLabel("邮箱");
-        phoneItem.setLabel("手机号");
+
 
         nameItem.setValue("张三");
         studentIdItem.setValue("20240001");
@@ -61,30 +52,32 @@ public class FormController {
         phoneItem.setValue("13800138000");
 
         // validators
-        nameVal = new FieldValidator(nameItem::getValue, v -> {
+        FieldValidator nameVal = new FieldValidator(nameItem::getValue, v -> {
             if (v == null || v.isBlank()) return "必填";
             if (v.length() < 2 || v.length() > 30) return "姓名长度需在2-30字符";
             return null;
         });
-        studentIdVal = new FieldValidator(studentIdItem::getValue, v -> {
+        FieldValidator studentIdVal = new FieldValidator(studentIdItem::getValue, v -> {
             if (v == null || v.isBlank()) return "必填";
             if (!Pattern.compile("^[A-Za-z0-9_-]{4,20}$").matcher(v).matches()) return "学号需为4-20位字母/数字/下划线";
             return null;
         });
-        ageVal = new FieldValidator(ageItem::getValue, v -> {
+        FieldValidator ageVal = new FieldValidator(ageItem::getValue, v -> {
             if (v == null || v.isBlank()) return "必填";
             try {
                 int age = Integer.parseInt(v);
                 if (age < 1 || age > 120) return "年龄需在1-120之间";
-            } catch (Exception e) { return "必须为整数"; }
+            } catch (Exception e) {
+                return "必须为整数";
+            }
             return null;
         });
-        emailVal = new FieldValidator(emailItem::getValue, v -> {
+        FieldValidator emailVal = new FieldValidator(emailItem::getValue, v -> {
             if (v == null || v.isBlank()) return "必填";
             if (!Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[A-Za-z]{2,}$").matcher(v).matches()) return "邮箱格式不正确";
             return null;
         });
-        phoneVal = new FieldValidator(phoneItem::getValue, v -> {
+        FieldValidator phoneVal = new FieldValidator(phoneItem::getValue, v -> {
             if (v == null || v.isBlank()) return "必填";
             if (!Pattern.compile("^\\d{7,15}$").matcher(v).matches()) return "手机号需为7-15位数字";
             return null;

@@ -27,7 +27,13 @@ public class FormItem extends HBox {
         }
     }
 
-    public void setLabel(String text) { lbl.setText(text); }
+    // 新增：FXML 会自动调用这个 setter！
+    public void setLabelText(String text) {
+        lbl.setText(text);
+    }
+    public String getLabelText() {
+        return lbl.getText();
+    }
     public String getValue() { return input.getText(); }
     public void setValue(String v) { input.setText(v); }
     public void showError(String msg) {
