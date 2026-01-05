@@ -1,4 +1,6 @@
-package com.example.app.api;
+package com.example.app.api.executor;
+
+import com.example.app.api.ApiException;
 
 import java.io.IOException;
 

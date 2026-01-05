@@ -1,5 +1,7 @@
-package com.example.app.api;
+package com.example.app.api.okhttp;
 
+import com.example.app.api.*;
+import com.example.app.api.storage.ConfigStorage;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 

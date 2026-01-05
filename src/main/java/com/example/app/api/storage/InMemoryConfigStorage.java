@@ -1,4 +1,4 @@
-package com.example.app.api;
+package com.example.app.api.storage;
 
 import org.apache.commons.lang3.StringUtils;
 

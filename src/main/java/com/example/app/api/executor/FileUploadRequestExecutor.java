@@ -1,5 +1,7 @@
-package com.example.app.api;
+package com.example.app.api.executor;
 
+import com.example.app.api.ApiException;
+import com.example.app.api.RequestHttp;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;

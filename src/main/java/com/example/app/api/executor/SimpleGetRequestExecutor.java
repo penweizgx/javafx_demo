@@ -1,5 +1,7 @@
-package com.example.app.api;
+package com.example.app.api.executor;
 
+import com.example.app.api.ApiException;
+import com.example.app.api.RequestHttp;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

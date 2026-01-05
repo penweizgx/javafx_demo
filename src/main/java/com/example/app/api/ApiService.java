@@ -1,5 +1,7 @@
 package com.example.app.api;
 
+import com.example.app.api.executor.RequestExecutor;
+
 // 1. 基础服务接口
 public interface ApiService {
     String get(String url, String queryParam) throws ApiException;

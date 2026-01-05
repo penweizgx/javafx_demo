@@ -1,5 +1,10 @@
 package com.example.app.api;
 
+import com.example.app.api.executor.RequestExecutor;
+import com.example.app.api.executor.SimpleGetRequestExecutor;
+import com.example.app.api.executor.SimplePostRequestExecutor;
+import com.example.app.api.storage.ConfigStorage;
+import com.example.app.api.storage.InMemoryConfigStorage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

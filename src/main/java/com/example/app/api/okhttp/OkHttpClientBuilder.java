@@ -1,4 +1,4 @@
-package com.example.app.api;
+package com.example.app.api.okhttp;
 
 import okhttp3.*;
 

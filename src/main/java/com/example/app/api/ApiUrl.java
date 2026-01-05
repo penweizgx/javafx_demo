@@ -1,9 +1,11 @@
 package com.example.app.api;
 
+import com.example.app.api.storage.ConfigStorage;
+import com.example.app.api.storage.HostConfig;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import static com.example.app.api.HostConfig.API_DEFAULT_HOST_URL;
-import static com.example.app.api.HostConfig.buildUrl;
+import static com.example.app.api.storage.HostConfig.API_DEFAULT_HOST_URL;
+import static com.example.app.api.storage.HostConfig.buildUrl;
 
 /**
  * <pre>
