@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 微信接口地址域名部分的自定义设置信息.
  *
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
- * created on  2019-06-09
+ *         created on 2019-06-09
  */
 @Data
 @Builder

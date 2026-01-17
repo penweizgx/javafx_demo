@@ -2,14 +2,21 @@ package com.example.app.api.storage;
 
 public interface ConfigStorage {
     HostConfig getApiHost();
+
     String getAccessToken();
+
     void updateAccessToken(String accessToken, int expiresInSeconds);
 
     void updateRSAKey(String modulus, String exponent);
 
+    String getRSAModulus();
+
+    String getRSAExponent();
+
     boolean isInitRSAKey();
 
     boolean isAccessTokenExpired();
+
     void expireAccessToken();
 
     /**

@@ -57,7 +57,6 @@ public interface ApiUrl {
     CURRENT_USER(API_DEFAULT_HOST_URL, "/auth/currentUser"),
     ;
 
-
     private final String prefix;
     private final String path;
   }

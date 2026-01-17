@@ -32,8 +32,18 @@ public class InMemoryConfigStorage implements ConfigStorage {
 
     @Override
     public void updateRSAKey(String modulus, String exponent) {
-        this.rsaExponent = modulus;
-        this.rsaModulus = exponent;
+        this.rsaModulus = modulus;
+        this.rsaExponent = exponent;
+    }
+
+    @Override
+    public String getRSAModulus() {
+        return this.rsaModulus;
+    }
+
+    @Override
+    public String getRSAExponent() {
+        return this.rsaExponent;
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.example.app.api.executor.SimpleGetRequestExecutor;
 import com.example.app.api.executor.SimplePostRequestExecutor;
 import com.example.app.api.storage.ConfigStorage;
 import com.example.app.api.storage.InMemoryConfigStorage;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -54,46 +56,47 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
         throw new ApiException("重试达到最大次数【" + this.maxRetryTimes + "】");
     }
 
-    protected <T, E> T executeInternal(RequestExecutor<T, E> executor, String uri, E data) throws ApiException, IOException {
-        // 添加access token
-        if (uri.contains("access_token")) {
-            throw new IllegalArgumentException("uri参数中不允许有access_token");
-        }
-
-        String accessToken = this.getAccessToken();
-        if (accessToken != null && !uri.contains("access_token=")) {
-            if (uri.indexOf('?') == -1) {
-                uri += '?';
-            }
-            uri += uri.endsWith("?") ? "access_token=" + accessToken : "&access_token=" + accessToken;
-        }
-
+    protected <T, E> T executeInternal(RequestExecutor<T, E> executor, String uri, E data)
+            throws ApiException, IOException {
+        // Token is now handled by header interceptor in implementation classes
         return executor.execute(uri, data);
     }
 
     public void initRSAKey() {
-       if(!this.configStorage.isInitRSAKey()){
-           // 获取锁的逻辑
-           synchronized (this) {
-               if (this.configStorage.isInitRSAKey()) {
-                   String rsaKeyRequest = this.getRSAKeyRequest();
-                   log.debug("RSAKeyRequest: {}", rsaKeyRequest);
-               }
-           }
-       }
-    }
-    @Override
-    public String getAccessToken() throws ApiException {
-        if (this.configStorage.isAccessTokenExpired()) {
-            // 获取锁的逻辑
+        if (!this.configStorage.isInitRSAKey()) {
             synchronized (this) {
-                if (this.configStorage.isAccessTokenExpired()) {
-                    String responseContent = this.getAccessTokenRequest();
-                    // 解析响应并更新token
-                    this.configStorage.updateAccessToken("new_token", 7200);
+                if (!this.configStorage.isInitRSAKey()) {
+                    try {
+                        String rsaKeyRequest = this.getRSAKeyRequest();
+                        log.debug("RSAKeyRequest: {}", rsaKeyRequest);
+                        JsonObject data = extractResBody(rsaKeyRequest);
+                        if (data != null) {
+                            String modulus = data.get("modulus").getAsString();
+                            String exponent = data.get("exponent").getAsString();
+                            this.configStorage.updateRSAKey(modulus, exponent);
+                        }
+                    } catch (ApiException e) {
+                        log.error("Init RSA Key failed", e);
+                    }
                 }
             }
         }
+    }
+
+    protected JsonObject extractResBody(String responseContent) throws ApiException {
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(responseContent, JsonObject.class);
+        if (jsonObject.has("code") && jsonObject.get("code").getAsInt() != 200) {
+            throw new ApiException(jsonObject.get("message").getAsString(), jsonObject.get("code").getAsInt());
+        }
+        if (jsonObject.has("resbody")) {
+            return jsonObject.getAsJsonObject("resbody");
+        }
+        return null;
+    }
+
+    @Override
+    public String getAccessToken() throws ApiException {
         return this.configStorage.getAccessToken();
     }
 
@@ -101,8 +104,7 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
         return new InMemoryConfigStorage();
     }
 
-
     protected abstract String getRSAKeyRequest() throws ApiException;
 
-    protected abstract String getAccessTokenRequest() throws ApiException;
+    protected abstract String getCurrentUser() throws ApiException;
 }
