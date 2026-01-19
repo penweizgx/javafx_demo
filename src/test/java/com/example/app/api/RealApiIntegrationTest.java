@@ -40,7 +40,7 @@ public class RealApiIntegrationTest {
         assertNotNull(apiService.getAccessToken(), "Token should not be null");
 
         System.out.println("Fetching current user...");
-        String userJson = apiService.getCurrentUser();
+        String userJson = apiService.getCurrentUser().toString();
         System.out.println("User info: " + userJson);
 
         assertNotNull(userJson, "User info should not be null");

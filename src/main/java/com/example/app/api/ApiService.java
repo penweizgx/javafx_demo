@@ -1,16 +1,20 @@
 package com.example.app.api;
 
-import com.example.app.api.executor.RequestExecutor;
+import java.util.Map;
 
 // 1. 基础服务接口
 public interface ApiService {
-    String get(String url, String queryParam) throws ApiException;
+    Object get(String url);
 
-    String post(String url, String postData) throws ApiException;
+    Object get(String url, Map<String, Object> queryParam);
 
-    <T, E> T execute(RequestExecutor<T, E> executor, String uri, E data) throws ApiException;
+    Object postJSON(String url, Map<String, Object> param);
 
-    String getAccessToken() throws ApiException;
+    Object post(String url, Map<String, Object> param);
+
+    <T, E> T execute(RequestExecutor<T, E> executor, String uri, E data);
+
+    String getAccessToken();
 
     /**
      * 初始化http请求对象.
@@ -23,5 +27,9 @@ public interface ApiService {
      * @param username username
      * @param password password
      */
-    void login(String username, String password) throws ApiException;
+    void login(String username, String password);
+
+    Object getRSAKeyRequest();
+
+    Object getCurrentUser();
 }

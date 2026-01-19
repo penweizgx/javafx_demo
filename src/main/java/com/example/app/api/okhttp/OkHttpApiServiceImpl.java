@@ -120,23 +120,5 @@ public class OkHttpApiServiceImpl extends BaseApiServiceImpl<OkHttpClient, OkHtt
         }
     }
 
-    @Override
-    protected String getRSAKeyRequest() throws ApiException {
-        Request request = new Request.Builder().url(ApiUrl.Authenticate.PUBLIC_KEY.getUrl(configStorage)).get().build();
-        try (Response response = httpClient.newCall(request).execute()) {
-            return Objects.requireNonNull(response.body()).string();
-        } catch (IOException e) {
-            throw new ApiException("获取RSA Public Key失败", e);
-        }
-    }
 
-    @Override
-    public String getCurrentUser() throws ApiException {
-        Request request = new Request.Builder().url(ApiUrl.Authenticate.CURRENT_USER.getUrl(configStorage)).get().build();
-        try (Response response = httpClient.newCall(request).execute()) {
-            return Objects.requireNonNull(response.body()).string();
-        } catch (IOException e) {
-            throw new ApiException("获取当前用户信息失败", e);
-        }
-    }
 }

@@ -1,6 +1,5 @@
 package com.example.app.api;
 
-import com.example.app.api.executor.RequestExecutor;
 import com.example.app.api.storage.ConfigStorage;
 
 import com.google.gson.JsonObject;
@@ -148,16 +147,6 @@ class ApiServiceTest {
         @Override
         public void login(String username, String password) throws ApiException {
             // No-op for test
-        }
-
-        @Override
-        protected String getRSAKeyRequest() throws ApiException {
-            return rsaKeyResponse;
-        }
-
-        @Override
-        protected String getCurrentUser() throws ApiException {
-            return "";
         }
 
         @Override

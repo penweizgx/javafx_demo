@@ -1,6 +1,7 @@
-package com.example.app.api.executor;
+package com.example.app.api.okhttp.executor;
 
 import com.example.app.api.ApiException;
+import com.example.app.api.RequestExecutor;
 import com.example.app.api.RequestHttp;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -22,11 +23,10 @@ public class FileUploadRequestExecutor<H, P> implements RequestExecutor<String, 
 
     @Override
     public String execute(String uri, File file) throws ApiException, IOException {
-            return executeApache(uri, file);
+        return executeApache(uri, file);
     }
 
     private String executeApache(String uri, File file) throws IOException {
-        CloseableHttpClient client = (CloseableHttpClient) requestHttp.getRequestHttpClient();
         HttpPost httpPost = new HttpPost(uri);
 
         MultipartEntityBuilder builder = MultipartEntityBuilder.create()
@@ -34,7 +34,8 @@ public class FileUploadRequestExecutor<H, P> implements RequestExecutor<String, 
                 .setMode(HttpMultipartMode.RFC6532);
         httpPost.setEntity(builder.build());
 
-        try (CloseableHttpResponse response = client.execute(httpPost)) {
+        try (CloseableHttpClient client = (CloseableHttpClient) requestHttp.getRequestHttpClient();
+                CloseableHttpResponse response = client.execute(httpPost)) {
             return EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
         }
     }

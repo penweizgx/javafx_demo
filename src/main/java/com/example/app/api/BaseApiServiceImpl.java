@@ -1,8 +1,8 @@
 package com.example.app.api;
 
-import com.example.app.api.executor.RequestExecutor;
-import com.example.app.api.executor.SimpleGetRequestExecutor;
-import com.example.app.api.executor.SimplePostRequestExecutor;
+import com.example.app.api.okhttp.executor.FormPostRequestExecutor;
+import com.example.app.api.okhttp.executor.SimpleGetRequestExecutor;
+import com.example.app.api.okhttp.executor.JsonPostRequestExecutor;
 import com.example.app.api.storage.ConfigStorage;
 import com.example.app.api.storage.InMemoryConfigStorage;
 import com.google.gson.Gson;
@@ -10,21 +10,33 @@ import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHttp<H, P> {
     protected ConfigStorage configStorage;
-    private int retrySleepMillis = 1000;
-    private int maxRetryTimes = 5;
+    private static final int retrySleepMillis = 1000;
+    private static final int maxRetryTimes = 5;
 
     @Override
-    public String get(String url, String queryParam) throws ApiException {
+    public Object get(String url) {
+        return this.get(url, null);
+    }
+
+    @Override
+    public Object get(String url, Map<String, Object> queryParam)  {
         return execute(SimpleGetRequestExecutor.create(this), url, queryParam);
     }
 
     @Override
-    public String post(String url, String postData) throws ApiException {
-        return execute(SimplePostRequestExecutor.create(this), url, postData);
+    public Object postJSON(String url, Map<String, Object> param) {
+        return execute(JsonPostRequestExecutor.create(this), url, param);
+    }
+
+
+    @Override
+    public Object post(String url, Map<String, Object> param) {
+        return execute(FormPostRequestExecutor.create(this), url, param);
     }
 
     @Override
@@ -32,14 +44,14 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
         int retryTimes = 0;
         do {
             try {
-                return this.executeInternal(executor, uri, data);
+                return executor.execute(uri, data);
             } catch (ApiException e) {
-                if (retryTimes + 1 > this.maxRetryTimes) {
-                    throw new ApiException("重试达到最大次数【" + this.maxRetryTimes + "】");
+                if (retryTimes + 1 > maxRetryTimes) {
+                    throw new ApiException("重试达到最大次数【" + maxRetryTimes + "】");
                 }
 
                 if (e.getErrorCode() == -1) { // 系统繁忙
-                    int sleepMillis = this.retrySleepMillis * (1 << retryTimes);
+                    int sleepMillis = retrySleepMillis * (1 << retryTimes);
                     try {
                         Thread.sleep(sleepMillis);
                     } catch (InterruptedException e1) {
@@ -51,15 +63,9 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } while (retryTimes++ < this.maxRetryTimes);
+        } while (retryTimes++ < maxRetryTimes);
 
-        throw new ApiException("重试达到最大次数【" + this.maxRetryTimes + "】");
-    }
-
-    protected <T, E> T executeInternal(RequestExecutor<T, E> executor, String uri, E data)
-            throws ApiException, IOException {
-        // Token is now handled by header interceptor in implementation classes
-        return executor.execute(uri, data);
+        throw new ApiException("重试达到最大次数【" + maxRetryTimes + "】");
     }
 
     public void initRSAKey() {
@@ -67,7 +73,7 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
             synchronized (this) {
                 if (!this.configStorage.isInitRSAKey()) {
                     try {
-                        String rsaKeyRequest = this.getRSAKeyRequest();
+                        String rsaKeyRequest = this.getRSAKeyRequest().toString();
                         log.debug("RSAKeyRequest: {}", rsaKeyRequest);
                         JsonObject data = extractResBody(rsaKeyRequest);
                         if (data != null) {
@@ -104,7 +110,14 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
         return new InMemoryConfigStorage();
     }
 
-    protected abstract String getRSAKeyRequest() throws ApiException;
+    @Override
+    public Object getRSAKeyRequest() throws ApiException {
+        return this.get(ApiUrl.Authenticate.PUBLIC_KEY.getUrl(configStorage));
+    }
 
-    protected abstract String getCurrentUser() throws ApiException;
+    @Override
+    public Object getCurrentUser() throws ApiException {
+        return this.get(ApiUrl.Authenticate.CURRENT_USER.getUrl(configStorage));
+
+    }
 }
