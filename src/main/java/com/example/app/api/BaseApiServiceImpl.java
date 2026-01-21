@@ -5,6 +5,7 @@ import com.example.app.api.okhttp.executor.SimpleGetRequestExecutor;
 import com.example.app.api.okhttp.executor.JsonPostRequestExecutor;
 import com.example.app.api.storage.ConfigStorage;
 import com.example.app.api.storage.InMemoryConfigStorage;
+import com.example.app.model.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
     }
 
     @Override
-    public Object get(String url, Map<String, Object> queryParam)  {
+    public Object get(String url, Map<String, Object> queryParam) {
         return execute(SimpleGetRequestExecutor.create(this), url, queryParam);
     }
 
@@ -32,7 +33,6 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
     public Object postJSON(String url, Map<String, Object> param) {
         return execute(JsonPostRequestExecutor.create(this), url, param);
     }
-
 
     @Override
     public Object post(String url, Map<String, Object> param) {
@@ -116,8 +116,9 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
     }
 
     @Override
-    public Object getCurrentUser() throws ApiException {
-        return this.get(ApiUrl.Authenticate.CURRENT_USER.getUrl(configStorage));
-
+    public User getCurrentUser() throws ApiException {
+        String response = (String) this.get(ApiUrl.Authenticate.CURRENT_USER.getUrl(configStorage));
+        JsonObject jsonObject = extractResBody(response);
+        return new Gson().fromJson(jsonObject, User.class);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.app.api;
 
+import com.example.app.model.User;
 import java.util.Map;
 
 // 1. 基础服务接口
@@ -31,5 +32,5 @@ public interface ApiService {
 
     Object getRSAKeyRequest();
 
-    Object getCurrentUser();
+    User getCurrentUser();
 }
