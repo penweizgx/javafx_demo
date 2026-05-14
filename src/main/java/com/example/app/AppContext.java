@@ -1,17 +1,31 @@
 package com.example.app;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.inject.Injector;
 
 public class AppContext {
     private static AppContext instance;
-    private final Map<Class<?>, Object> registry = new HashMap<>();
+    private final Injector injector;
 
-    private AppContext() {}
+    private AppContext(Injector injector) {
+        this.injector = injector;
+    }
 
-    public static void init() { instance = new AppContext(); }
-    public static AppContext get() { return instance; }
+    public static void init(Injector injector) {
+        instance = new AppContext(injector);
+    }
 
-    public <T> void register(Class<T> k, T instance) { registry.put(k, instance); }
-    public <T> T getService(Class<T> k) { return k.cast(registry.get(k)); }
+    public static AppContext get() {
+        if (instance == null) {
+            throw new IllegalStateException("AppContext not initialized");
+        }
+        return instance;
+    }
+
+    public <T> T getService(Class<T> clazz) {
+        return injector.getInstance(clazz);
+    }
+
+    public Injector getInjector() {
+        return injector;
+    }
 }

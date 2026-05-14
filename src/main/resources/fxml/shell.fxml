@@ -12,15 +12,15 @@
         <top>
             <HBox spacing="8" styleClass="top-bar" alignment="CENTER_LEFT">
                 <HBox spacing="8" styleClass="nav-menu">
-                    <Button fx:id="btnHome" text="首页"/>
-                    <Button fx:id="btnForm" text="表单"/>
-                    <Button fx:id="btnList" text="列表"/>
+                    <Button fx:id="btnHome" text="首页" styleClass="flat"/>
+                    <Button fx:id="btnForm" text="表单" styleClass="flat"/>
+                    <Button fx:id="btnList" text="列表" styleClass="flat"/>
                 </HBox>
                 <Region HBox.hgrow="ALWAYS"/>
                 <HBox spacing="8" styleClass="action-menu" alignment="CENTER_LEFT">
-                    <Label fx:id="userNameLabel" styleClass="user-name-label" visible="false" />
-                    <Button fx:id="btnTheme" text="切换主题"/>
-                    <Button fx:id="btnBack" text="返回"/>
+                    <Label fx:id="userNameLabel" visible="false" />
+                    <Button fx:id="btnTheme" text="切换主题" styleClass="flat"/>
+                    <Button fx:id="btnBack" text="返回" styleClass="accent"/>
                 </HBox>
             </HBox>
         </top>

@@ -1,18 +1,20 @@
 package com.example.app.viewmodel;
 
+import com.example.app.executor.AsyncExecutor;
+import com.example.app.i18n.I18nService;
 import com.example.app.service.AuthService;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import lombok.Getter;
 
-/**
- * 登录界面ViewModel
- */
+import java.util.function.Consumer;
+
 public class LoginViewModel extends ViewModelBase {
 
     private final AuthService authService;
+    private final I18nService i18n;
 
-    // Properties for two-way binding
     @Getter
     private final StringProperty username = new SimpleStringProperty("");
 
@@ -25,40 +27,31 @@ public class LoginViewModel extends ViewModelBase {
     @Getter
     private final BooleanProperty loginInProgress = new SimpleBooleanProperty(false);
 
-    // Callback
     private Runnable onLoginSuccess;
 
-    public LoginViewModel(AuthService authService) {
+    public LoginViewModel(AuthService authService, I18nService i18n) {
         this.authService = authService;
+        this.i18n = i18n;
     }
 
-    /**
-     * 设置登录成功回调
-     */
     public void setOnLoginSuccess(Runnable callback) {
         this.onLoginSuccess = callback;
     }
 
-    /**
-     * 执行登录
-     */
     public void login() {
-        // 验证输入
         if (username.get() == null || username.get().trim().isEmpty()) {
-            errorMessage.set("用户名不能为空");
+            errorMessage.set(i18n.getString("login.error.empty.username"));
             return;
         }
 
         if (password.get() == null || password.get().trim().isEmpty()) {
-            errorMessage.set("密码不能为空");
+            errorMessage.set(i18n.getString("login.error.empty.password"));
             return;
         }
 
-        // 清除之前的错误
         errorMessage.set("");
         loginInProgress.set(true);
 
-        // 异步执行登录
         executeAsync(
                 () -> {
                     authService.login(username.get(), password.get()).join();
@@ -72,13 +65,10 @@ public class LoginViewModel extends ViewModelBase {
                 },
                 error -> {
                     loginInProgress.set(false);
-                    errorMessage.set(error.getMessage());
+                    errorMessage.set(i18n.getString("login.error.failed") + ": " + error.getMessage());
                 });
     }
 
-    /**
-     * 检查是否可以登录（用于按钮绑定）
-     */
     public BooleanBinding canLoginProperty() {
         return loginInProgress.not();
     }

@@ -11,3 +11,4 @@ public enum OrgBound {
 	CLAZZ; //班级
 }
 
+

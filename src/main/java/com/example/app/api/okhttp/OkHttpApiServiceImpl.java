@@ -2,6 +2,7 @@ package com.example.app.api.okhttp;
 
 import com.example.app.api.*;
 import com.example.app.utils.RSAUtils;
+import com.google.inject.Inject;
 
 import okhttp3.logging.HttpLoggingInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,10 @@ import java.util.Objects;
 public class OkHttpApiServiceImpl extends BaseApiServiceImpl<OkHttpClient, OkHttpProxyInfo> {
     private OkHttpClient httpClient;
     private OkHttpProxyInfo httpProxy;
+
+    @Inject
+    public OkHttpApiServiceImpl() {
+    }
 
     @Override
     public OkHttpClient getRequestHttpClient() {

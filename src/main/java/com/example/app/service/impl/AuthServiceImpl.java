@@ -1,22 +1,25 @@
 package com.example.app.service.impl;
 
 import com.example.app.api.ApiService;
+import com.example.app.exception.ExceptionHandler;
 import com.example.app.service.AuthService;
+import com.example.app.storage.TokenStorage;
+import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
 
-/**
- * 认证服务实现
- */
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final ApiService apiService;
+    private final TokenStorage tokenStorage;
     private boolean authenticated = false;
 
-    public AuthServiceImpl(ApiService apiService) {
+    @Inject
+    public AuthServiceImpl(ApiService apiService, TokenStorage tokenStorage) {
         this.apiService = apiService;
+        this.tokenStorage = tokenStorage;
     }
 
     @Override
@@ -27,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
                 authenticated = true;
                 log.info("User {} logged in successfully", username);
             } catch (Exception e) {
-                log.error("Login failed for user {}", username, e);
+                ExceptionHandler.handle(e, "Login failed for user " + username);
                 throw new RuntimeException("登录失败: " + e.getMessage(), e);
             }
         });
@@ -35,12 +38,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean isAuthenticated() {
-        return authenticated;
+        return authenticated || tokenStorage.hasValidToken();
     }
 
     @Override
     public void logout() {
         authenticated = false;
+        tokenStorage.clearToken();
         log.info("User logged out");
     }
 }

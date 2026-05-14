@@ -1,6 +1,9 @@
 package com.example.app.controller;
 
+import com.example.app.ThemeService;
 import com.example.app.ViewManager;
+import com.example.app.exception.ExceptionHandler;
+import com.example.app.i18n.I18nService;
 import com.example.app.model.User;
 import com.example.app.service.DialogService;
 import com.example.app.service.LoadingService;
@@ -24,10 +27,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * 主界面Controller - 纯View层
- * 职责：UI初始化、数据绑定和事件转发
- */
 public class ShellController {
 
     @FXML
@@ -42,62 +41,60 @@ public class ShellController {
     private ShellViewModel viewModel;
     private DialogService dialog;
     private ToastService toast;
+    private ThemeService themeService;
+    private I18nService i18n;
 
     private boolean dark = false;
 
-    // 存储页面ID到Tab的映射
     private final Map<String, Tab> tabMap = new HashMap<>();
-    // 存储页面ID到页面名称的映射
     private final Map<String, String> pageNames = new HashMap<>();
-    // 存储页面ID到菜单按钮的映射
     private final Map<String, Button> menuButtonMap = new HashMap<>();
-    // 当前选中的页面ID
     private String currentSelectedPageId = null;
 
-    /**
-     * 设置ViewModel并建立数据绑定
-     */
+    public ShellController() {
+    }
+
     public void setViewModel(ShellViewModel viewModel) {
         this.viewModel = viewModel;
         setupBindings();
-
-        // 加载用户信息
         viewModel.loadUserProfile();
     }
 
-    /**
-     * 初始化服务
-     */
     public void initServices(DialogService d, LoadingService l, ToastService t) {
         this.dialog = d;
         this.toast = t;
     }
 
-    /**
-     * 建立UI和ViewModel之间的数据绑定
-     */
+    public void setThemeService(ThemeService themeService) {
+        this.themeService = themeService;
+    }
+
+    public void setI18n(I18nService i18n) {
+        this.i18n = i18n;
+    }
+
     private void setupBindings() {
-        // 绑定用户名显示
         userNameLabel.textProperty().bind(viewModel.getUserName());
         userNameLabel.visibleProperty().bind(viewModel.getUserLoaded());
-
-        // 点击用户名显示详情
         userNameLabel.setOnMouseClicked(e -> showUserDetails());
     }
 
     @FXML
     public void initialize() {
-        // 初始化页面名称映射
-        pageNames.put("home", "首页");
-        pageNames.put("form", "表单");
-        pageNames.put("list", "列表");
+        if (i18n != null) {
+            pageNames.put("home", i18n.getString("shell.menu.home"));
+            pageNames.put("form", i18n.getString("shell.menu.form"));
+            pageNames.put("list", i18n.getString("shell.menu.list"));
+        } else {
+            pageNames.put("home", "首页");
+            pageNames.put("form", "表单");
+            pageNames.put("list", "列表");
+        }
 
-        // 初始化菜单按钮映射
         menuButtonMap.put("home", btnHome);
         menuButtonMap.put("form", btnForm);
         menuButtonMap.put("list", btnList);
 
-        // 监听TabPane的选中变化
         tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
             if (newTab != null) {
                 String pageId = (String) newTab.getUserData();
@@ -125,20 +122,17 @@ public class ShellController {
             }
         });
         btnTheme.setOnAction(e -> {
-            dark = !dark;
-            if (dark) {
-                root.getScene().getStylesheets().removeIf(s -> s.endsWith("light.css"));
-                root.getScene().getStylesheets().add(getClass().getResource("/css/dark.css").toExternalForm());
-            } else {
-                root.getScene().getStylesheets().removeIf(s -> s.endsWith("dark.css"));
-                root.getScene().getStylesheets().add(getClass().getResource("/css/light.css").toExternalForm());
+            if (themeService != null) {
+                dark = !dark;
+                if (dark) {
+                    themeService.setDark();
+                } else {
+                    themeService.setLight();
+                }
             }
         });
     }
 
-    /**
-     * 显示用户详情弹窗
-     */
     private void showUserDetails() {
         User currentUser = viewModel.getCurrentUserValue();
         if (currentUser == null)
@@ -152,13 +146,16 @@ public class ShellController {
         content.setStyle(
                 "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
 
-        Label title = new Label("用户详情");
+        String titleText = i18n != null ? i18n.getString("user.details") : "用户详情";
+        Label title = new Label(titleText);
         title.setFont(Font.font("System", FontWeight.BOLD, 18));
 
         VBox infoBox = new VBox(10);
+        String nameLabel = i18n != null ? i18n.getString("user.name") : "姓名:";
+        String orgLabel = i18n != null ? i18n.getString("user.org") : "机构:";
         infoBox.getChildren().addAll(
-                createDetailRow("姓名:", currentUser.getName()),
-                createDetailRow("机构:", currentUser.getOrgName()));
+                createDetailRow(nameLabel, currentUser.getName()),
+                createDetailRow(orgLabel, currentUser.getOrgName()));
 
         Button closeBtn = new Button("关闭");
         closeBtn.getStyleClass().add("primary-button");
@@ -181,9 +178,6 @@ public class ShellController {
         return new HBox(10, l, v);
     }
 
-    /**
-     * 显示或切换到指定的Tab
-     */
     public void showTab(String pageId) {
         try {
             if (tabMap.containsKey(pageId)) {
@@ -212,9 +206,10 @@ public class ShellController {
             tabPane.getSelectionModel().select(tab);
             updateMenuSelection(pageId);
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandler.handle(e, "Failed to load page: " + pageId);
             if (toast != null) {
-                toast.show("加载页面失败: " + pageId);
+                String msg = i18n != null ? i18n.getString("toast.page.load.failed", pageId) : "加载页面失败: " + pageId;
+                toast.show(msg);
             }
         }
     }
