@@ -17,6 +17,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -34,9 +36,15 @@ public class ShellController {
     @FXML
     private TabPane tabPane;
     @FXML
-    private Button btnHome, btnForm, btnList, btnBack, btnTheme;
+    private ImageView brandIcon;
+    @FXML
+    private Label brandLabel;
+    @FXML
+    private Button btnHome, btnForm, btnList, btnSystem, btnTheme;
     @FXML
     private Label userNameLabel;
+    @FXML
+    private Label copyrightLabel;
 
     private ShellViewModel viewModel;
     private DialogService dialog;
@@ -81,6 +89,33 @@ public class ShellController {
 
     @FXML
     public void initialize() {
+        initializeBrand();
+        initializeNavigation();
+        initializeButtons();
+    }
+
+    private void initializeBrand() {
+        if (i18n != null) {
+            brandLabel.setText(i18n.getString("shell.header.brand"));
+            copyrightLabel.setText(i18n.getString("shell.footer.copyright"));
+            btnSystem.setText(i18n.getString("shell.header.system"));
+            btnTheme.setText(i18n.getString("shell.header.theme"));
+        } else {
+            brandLabel.setText("JavaFX MVVM Demo");
+            copyrightLabel.setText("© 2024 JavaFX MVVM Demo");
+            btnSystem.setText("系统");
+            btnTheme.setText("主题");
+        }
+
+        try {
+            Image logo = new Image(getClass().getResourceAsStream("/images/logo.png"));
+            brandIcon.setImage(logo);
+        } catch (Exception e) {
+            brandIcon.setVisible(false);
+        }
+    }
+
+    private void initializeNavigation() {
         if (i18n != null) {
             pageNames.put("home", i18n.getString("shell.menu.home"));
             pageNames.put("form", i18n.getString("shell.menu.form"));
@@ -90,6 +125,10 @@ public class ShellController {
             pageNames.put("form", "表单");
             pageNames.put("list", "列表");
         }
+
+        btnHome.setText(pageNames.get("home"));
+        btnForm.setText(pageNames.get("form"));
+        btnList.setText(pageNames.get("list"));
 
         menuButtonMap.put("home", btnHome);
         menuButtonMap.put("form", btnForm);
@@ -105,22 +144,17 @@ public class ShellController {
                 clearMenuSelection();
             }
         });
+    }
 
+    private void initializeButtons() {
         btnHome.setOnAction(e -> showTab("home"));
         btnForm.setOnAction(e -> showTab("form"));
         btnList.setOnAction(e -> showTab("list"));
-        btnBack.setOnAction(e -> {
-            if (tabPane.getTabs().size() > 1) {
-                Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
-                if (currentTab != null) {
-                    tabPane.getTabs().remove(currentTab);
-                    String pageId = (String) currentTab.getUserData();
-                    if (pageId != null) {
-                        tabMap.remove(pageId);
-                    }
-                }
-            }
+
+        btnSystem.setOnAction(e -> {
+            // Placeholder - no action yet
         });
+
         btnTheme.setOnAction(e -> {
             if (themeService != null) {
                 dark = !dark;

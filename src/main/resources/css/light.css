@@ -6,5 +6,23 @@
 
 .app-shell { -fx-background-color: -bg; }
 .page-root { -fx-background-color: -panel-bg; -fx-background-radius: 6; -fx-padding: 18; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 6,0,0,1); }
+
+/* header */
+.header-bar { -fx-background-color: linear-gradient(#2563eb, #1d4ed8); }
+.header-bar .brand-title { -fx-text-fill: white; }
+.header-bar Button { -fx-text-fill: white; -fx-background-color: transparent; -fx-background-radius: 6; }
+.header-bar Label { -fx-text-fill: white; }
+
+/* aside navigation */
+.aside-nav { -fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-width: 0 1 0 0; }
+.aside-nav .nav-item { -fx-text-fill: #374151; -fx-background-color: transparent; }
+.aside-nav .nav-item:hover { -fx-background-color: #f3f4f6; }
+.aside-nav .nav-item.menu-selected { -fx-background-color: #eff6ff; -fx-text-fill: #2563eb; }
+
+/* footer */
+.footer-bar { -fx-background-color: #f9fafb; -fx-border-color: #e5e7eb; -fx-border-width: 1 0 0 0; }
+.footer-bar Label { -fx-text-fill: #6b7280; -fx-font-size: 11; }
+
+/* legacy */
 .top-bar { -fx-background-color: linear-gradient(#2b6cff, #1a5be0); }
 .top-bar Button { -fx-text-fill: white; -fx-background-color: transparent; -fx-background-radius: 6; }
