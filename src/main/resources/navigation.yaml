@@ -1,0 +1,120 @@
+navigation:
+  - id: home
+    label: 首页
+    labelKey: nav.home
+    path: /home
+    fxml: /fxml/home.fxml
+    icon: home
+    expanded: true
+    options:
+      cacheable: true
+      singleton: true
+      closable: false
+
+  - id: system
+    label: 系统
+    labelKey: nav.system
+    icon: settings
+    expanded: true
+    children:
+      - id: user-mgmt
+        label: 用户管理
+        labelKey: nav.user.mgmt
+        children:
+          - id: user-list
+            label: 用户列表
+            labelKey: nav.user.list
+            path: /system/user/list
+            fxml: /fxml/user_list.fxml
+            icon: user-list
+            options:
+              cacheable: true
+              closable: true
+          - id: user-detail
+            label: 用户详情
+            labelKey: nav.user.detail
+            path: /system/user/detail/:id
+            fxml: /fxml/user_detail.fxml
+            icon: user-detail
+            options:
+              cacheable: false
+              supportsSubPage: true
+            children:
+              - id: user-basic
+                label: 基本信息
+                labelKey: nav.user.basic
+                tabId: basic
+              - id: user-history
+                label: 操作记录
+                labelKey: nav.user.history
+                tabId: history
+              - id: user-permission
+                label: 权限设置
+                labelKey: nav.user.permission
+                tabId: permission
+          - id: user-create
+            label: 新增用户
+            labelKey: nav.user.create
+            path: /system/user/create
+            fxml: /fxml/user_form.fxml
+            options:
+              singleton: true
+              confirmLeave: true
+      - id: role-mgmt
+        label: 角色管理
+        labelKey: nav.role.mgmt
+        children:
+          - id: role-list
+            label: 角色列表
+            labelKey: nav.role.list
+            path: /system/role/list
+            fxml: /fxml/role_list.fxml
+
+  - id: business
+    label: 业务
+    labelKey: nav.business
+    icon: business
+    children:
+      - id: form-demo
+        label: 表单示例
+        labelKey: nav.form.demo
+        path: /form
+        fxml: /fxml/form.fxml
+        icon: form
+        options:
+          cacheable: true
+      - id: list-demo
+        label: 列表示例
+        labelKey: nav.list.demo
+        path: /list
+        fxml: /fxml/list.fxml
+        icon: list
+        options:
+          cacheable: true
+
+quickAccess:
+  header:
+    - id: pending
+      label: 待审批
+      labelKey: quick.pending
+      icon: bell
+      path: /workflow/pending
+      showBadge: true
+      badgeSource: "${pendingCount}"
+    - id: my-profile
+      label: 我的资料
+      labelKey: quick.profile
+      icon: user
+      path: /system/user/detail/:id
+      params:
+        userId: "${currentUserId}"
+
+  dashboard:
+    - id: todo
+      label: 待办事项
+      labelKey: dashboard.todo
+      path: /workflow/todo
+    - id: sales
+      label: 销售概览
+      labelKey: dashboard.sales
+      path: /report/sales

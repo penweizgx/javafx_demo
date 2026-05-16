@@ -61,6 +61,7 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
                     throw e;
                 }
             } catch (IOException e) {
+                log.error("url:{}",uri);
                 throw new RuntimeException(e);
             }
         } while (retryTimes++ < maxRetryTimes);

@@ -18,7 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HostConfig implements Serializable {
-  public static final String API_DEFAULT_HOST_URL = "https://demo.com/api";
+  public static final String API_DEFAULT_HOST_URL = "https://doixiao.cn/api";
 
   /**
    * 对应于：https://api.weixin.qq.com

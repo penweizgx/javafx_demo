@@ -1,0 +1,258 @@
+package com.example.app.router;
+
+import com.example.app.AppContext;
+import com.example.app.ViewManager;
+import com.example.app.exception.ExceptionHandler;
+import com.example.app.guard.GuardResult;
+import com.example.app.guard.NavigationGuard;
+import com.example.app.navigation.EventBus;
+import com.example.app.navigation.RouteChangeEvent;
+import com.example.app.navigation.RouteParams;
+
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+@Slf4j
+public class Router {
+
+    private final RouteRegistry registry;
+    private final TabPane tabPane;
+    private final HistoryManager historyManager;
+    private final List<NavigationGuard> globalGuards = new ArrayList<>();
+
+    private final Map<String, Parent> pageCache = new HashMap<>();
+    private final Map<String, Tab> tabByPath = new HashMap<>();
+
+    private RouteHistory current;
+    private Runnable pendingNavigation;
+    private RouteParams pendingParams;
+
+    public Router(RouteRegistry registry, TabPane tabPane) {
+        this.registry = registry;
+        this.tabPane = tabPane;
+        this.historyManager = new HistoryManager();
+        setupTabListener();
+    }
+
+    public void addGlobalGuard(NavigationGuard guard) {
+        globalGuards.add(guard);
+    }
+
+    public void removeGlobalGuard(NavigationGuard guard) {
+        globalGuards.remove(guard);
+    }
+
+    public void navigate(String path) {
+        navigate(path, RouteParams.empty());
+    }
+
+    public void navigate(String path, RouteParams params) {
+        RouteMatch match = registry.match(path);
+        if (match == null) {
+            log.warn("Route not found: {}", path);
+            return;
+        }
+
+        RouteParams merged = new RouteParams();
+        merged.addAll(match.getPathParams());
+        if (params != null) {
+            merged.getData().putAll(params.getData());
+            if (params.getTabId() != null) merged.tabId(params.getTabId());
+            if (params.getSubPagePath() != null) merged.subPage(params.getSubPagePath());
+        }
+
+        GuardResult guardResult = executeGuards(path, merged);
+        if (!guardResult.isAllowed()) {
+            handleGuardResult(guardResult);
+            return;
+        }
+
+        doNavigate(path, match.getFxmlPath(), merged);
+    }
+
+    private GuardResult executeGuards(String path, RouteParams params) {
+        for (NavigationGuard guard : globalGuards) {
+            GuardResult result = guard.beforeEach(path, params);
+            if (!result.isAllowed()) {
+                return result;
+            }
+        }
+        return GuardResult.allow();
+    }
+
+    private void doNavigate(String path, String fxmlPath, RouteParams params) {
+        try {
+            Tab existingTab = tabByPath.get(path);
+            if (existingTab != null) {
+                tabPane.getSelectionModel().select(existingTab);
+                updateTabParams(existingTab, params);
+                return;
+            }
+
+            Parent page = loadPage(fxmlPath, params);
+
+            Tab tab = new Tab();
+            tab.setText(getTabTitle(path, params));
+            tab.setContent(page);
+            tab.setClosable(true);
+            tab.setUserData(new RouteHistory(path, params, tab));
+
+            tab.setOnClosed(e -> {
+                tabByPath.remove(path);
+                historyManager.onTabClosed(tab);
+                EventBus.getInstance().publish(RouteChangeEvent.tabClose(path, tab));
+            });
+
+            tabPane.getTabs().add(tab);
+            tabPane.getSelectionModel().select(tab);
+
+            tabByPath.put(path, tab);
+
+            RouteHistory history = new RouteHistory(path, params, tab);
+            historyManager.push(history);
+            current = history;
+
+            EventBus.getInstance().publish(RouteChangeEvent.navigate(path, params, tab));
+
+        } catch (Exception e) {
+            ExceptionHandler.handle(e, "Failed to navigate to: " + path);
+        }
+    }
+
+    private Parent loadPage(String fxmlPath, RouteParams params) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+        loader.setControllerFactory(cls -> {
+            try {
+                return AppContext.get().getService(cls);
+            } catch (Exception e) {
+                try {
+                    return cls.getDeclaredConstructor().newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        Parent page = loader.load();
+
+        Object controller = loader.getController();
+        if (controller instanceof ParamReceiver receiver) {
+            receiver.receiveParams(params);
+        }
+
+        return page;
+    }
+
+    private void updateTabParams(Tab tab, RouteParams params) {
+        Object controller = getTabController(tab);
+        if (controller instanceof ParamReceiver receiver) {
+            receiver.receiveParams(params);
+        }
+    }
+
+    private Object getTabController(Tab tab) {
+        javafx.scene.Node content = tab.getContent();
+        if (content instanceof Parent parent && content.getProperties().containsKey("fx:controller")) {
+            return content.getProperties().get("fx:controller");
+        }
+        return null;
+    }
+
+    private String getTabTitle(String path, RouteParams params) {
+        String[] parts = path.split("/");
+        return parts.length > 0 ? parts[parts.length - 1] : path;
+    }
+
+    private void setupTabListener() {
+        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+            if (newTab != null) {
+                RouteHistory entry = (RouteHistory) newTab.getUserData();
+                if (entry != null) {
+                    current = entry;
+                    EventBus.getInstance().publish(RouteChangeEvent.tabSwitch(entry.getPath(), newTab));
+                }
+            }
+        });
+    }
+
+    public void back() {
+        RouteHistory prev = historyManager.back();
+        if (prev != null) {
+            Tab tab = prev.getTab();
+            if (tab != null && tabPane.getTabs().contains(tab)) {
+                tabPane.getSelectionModel().select(tab);
+            } else {
+                navigate(prev.getPath(), prev.getParams());
+            }
+            EventBus.getInstance().publish(RouteChangeEvent.back(prev.getPath(), prev.getTab()));
+        }
+    }
+
+    public void forward() {
+        RouteHistory next = historyManager.forward();
+        if (next != null) {
+            Tab tab = next.getTab();
+            if (tab != null && tabPane.getTabs().contains(tab)) {
+                tabPane.getSelectionModel().select(tab);
+            } else {
+                navigate(next.getPath(), next.getParams());
+            }
+            EventBus.getInstance().publish(RouteChangeEvent.forward(next.getPath(), next.getTab()));
+        }
+    }
+
+    public boolean canGoBack() {
+        return historyManager.canGoBack();
+    }
+
+    public boolean canGoForward() {
+        return historyManager.canGoForward();
+    }
+
+    public String getCurrentPath() {
+        return current != null ? current.getPath() : null;
+    }
+
+    public RouteParams getCurrentParams() {
+        return current != null ? current.getParams() : null;
+    }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
+
+    private void handleGuardResult(GuardResult result) {
+        if (result.getRedirectPath() != null) {
+            navigate(result.getRedirectPath());
+        } else if (result.getMessage() != null) {
+            log.info("Navigation blocked: {}", result.getMessage());
+        }
+    }
+
+    public void proceedNavigation() {
+        if (pendingNavigation != null) {
+            pendingNavigation.run();
+            pendingNavigation = null;
+            pendingParams = null;
+        }
+    }
+
+    public void clearCache() {
+        pageCache.clear();
+    }
+
+    public interface ParamReceiver {
+        void receiveParams(RouteParams params);
+    }
+}
