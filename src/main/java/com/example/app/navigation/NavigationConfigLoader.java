@@ -59,6 +59,12 @@ public class NavigationConfigLoader {
         node.setExpanded(Boolean.TRUE.equals(data.get("expanded")));
         node.setParent(parent);
 
+        if (data.containsKey("showInNav")) {
+            node.setShowInNav(Boolean.TRUE.equals(data.get("showInNav")));
+        } else {
+            node.setShowInNav(true);
+        }
+
         if (data.containsKey("path")) {
             node.setPath((String) data.get("path"));
             node.setFxml((String) data.get("fxml"));

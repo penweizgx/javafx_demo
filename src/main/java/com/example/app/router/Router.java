@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 public class Router {
 
     private final RouteRegistry registry;
-    private final TabPane tabPane;
+    private TabPane tabPane;
     private final HistoryManager historyManager;
     private final List<NavigationGuard> globalGuards = new ArrayList<>();
 
@@ -42,6 +42,17 @@ public class Router {
         this.registry = registry;
         this.tabPane = tabPane;
         this.historyManager = new HistoryManager();
+        if (tabPane != null) {
+            setupTabListener();
+        }
+    }
+
+    public Router(RouteRegistry registry) {
+        this(registry, null);
+    }
+
+    public void setTabPane(TabPane tabPane) {
+        this.tabPane = tabPane;
         setupTabListener();
     }
 
@@ -78,7 +89,7 @@ public class Router {
             return;
         }
 
-        doNavigate(path, match.getFxmlPath(), merged);
+        doNavigate(path, match.getFxmlPath(), merged, match);
     }
 
     private GuardResult executeGuards(String path, RouteParams params) {
@@ -91,8 +102,13 @@ public class Router {
         return GuardResult.allow();
     }
 
-    private void doNavigate(String path, String fxmlPath, RouteParams params) {
+    private void doNavigate(String path, String fxmlPath, RouteParams params, RouteMatch match) {
         try {
+            if (tabPane == null) {
+                log.warn("TabPane not set, cannot navigate to: {}", path);
+                return;
+            }
+
             Tab existingTab = tabByPath.get(path);
             if (existingTab != null) {
                 tabPane.getSelectionModel().select(existingTab);
@@ -103,7 +119,7 @@ public class Router {
             Parent page = loadPage(fxmlPath, params);
 
             Tab tab = new Tab();
-            tab.setText(getTabTitle(path, params));
+            tab.setText(getTabTitle(path, params, match));
             tab.setContent(page);
             tab.setClosable(true);
             tab.setUserData(new RouteHistory(path, params, tab));
@@ -134,10 +150,18 @@ public class Router {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         loader.setControllerFactory(cls -> {
             try {
-                return AppContext.get().getService(cls);
+                Object controller = AppContext.get().getService(cls);
+                if (controller instanceof ParamReceiver receiver && params != null) {
+                    receiver.receiveParams(params);
+                }
+                return controller;
             } catch (Exception e) {
                 try {
-                    return cls.getDeclaredConstructor().newInstance();
+                    Object controller = cls.getDeclaredConstructor().newInstance();
+                    if (controller instanceof ParamReceiver receiver && params != null) {
+                        receiver.receiveParams(params);
+                    }
+                    return controller;
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -147,7 +171,7 @@ public class Router {
         Parent page = loader.load();
 
         Object controller = loader.getController();
-        if (controller instanceof ParamReceiver receiver) {
+        if (controller instanceof ParamReceiver receiver && params != null) {
             receiver.receiveParams(params);
         }
 
@@ -169,7 +193,10 @@ public class Router {
         return null;
     }
 
-    private String getTabTitle(String path, RouteParams params) {
+    private String getTabTitle(String path, RouteParams params, RouteMatch match) {
+        if (match != null && match.getLabel() != null) {
+            return match.getLabel();
+        }
         String[] parts = path.split("/");
         return parts.length > 0 ? parts[parts.length - 1] : path;
     }

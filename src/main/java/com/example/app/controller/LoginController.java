@@ -35,6 +35,9 @@ public class LoginController {
         usernameField.textProperty().bindBidirectional(viewModel.getUsername());
         passwordField.textProperty().bindBidirectional(viewModel.getPassword());
 
+        usernameField.setText("15828245173");
+        passwordField.setText("351688");
+
         errorLabel.textProperty().bind(viewModel.getErrorMessage());
         errorLabel.visibleProperty().bind(viewModel.getErrorMessage().isNotEmpty());
 

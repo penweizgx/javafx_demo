@@ -18,4 +18,8 @@ public class RouteMatch {
     public String getPattern() {
         return definition.getPattern();
     }
+
+    public String getLabel() {
+        return definition.getLabel();
+    }
 }

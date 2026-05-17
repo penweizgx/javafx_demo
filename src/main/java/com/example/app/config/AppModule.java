@@ -11,8 +11,10 @@ import com.example.app.navigation.NavigationConfigLoader;
 import com.example.app.router.RouteRegistry;
 import com.example.app.router.Router;
 import com.example.app.service.AuthService;
+import com.example.app.service.UserManageService;
 import com.example.app.service.UserService;
 import com.example.app.service.impl.AuthServiceImpl;
+import com.example.app.service.impl.MockUserManageService;
 import com.example.app.service.impl.UserServiceImpl;
 import com.example.app.storage.TokenStorage;
 import com.google.inject.AbstractModule;
@@ -28,6 +30,7 @@ public class AppModule extends AbstractModule {
         bind(ApiService.class).to(OkHttpApiServiceImpl.class).in(Singleton.class);
         bind(AuthService.class).to(AuthServiceImpl.class).in(Singleton.class);
         bind(UserService.class).to(UserServiceImpl.class).in(Singleton.class);
+        bind(UserManageService.class).to(MockUserManageService.class).in(Singleton.class);
         bind(TokenStorage.class).in(Singleton.class);
         bind(I18nService.class).in(Singleton.class);
         bind(RouteRegistry.class).in(Singleton.class);

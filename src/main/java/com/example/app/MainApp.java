@@ -4,14 +4,19 @@ import com.example.app.api.ApiService;
 import com.example.app.config.AppModule;
 import com.example.app.controller.LoginController;
 import com.example.app.controller.ShellController;
+import com.example.app.controller.UserDetailController;
+import com.example.app.controller.UserListController;
 import com.example.app.exception.ExceptionHandler;
 import com.example.app.i18n.I18nService;
+import com.example.app.navigation.NavigationConfig;
+import com.example.app.navigation.NavigationConfigLoader;
+import com.example.app.router.RouteRegistry;
+import com.example.app.router.Router;
 import com.example.app.service.*;
-import com.example.app.service.impl.AuthServiceImpl;
-import com.example.app.service.impl.UserServiceImpl;
-import com.example.app.storage.TokenStorage;
 import com.example.app.viewmodel.LoginViewModel;
 import com.example.app.viewmodel.ShellViewModel;
+import com.example.app.viewmodel.UserDetailViewModel;
+import com.example.app.viewmodel.UserListViewModel;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import javafx.application.Application;
@@ -27,6 +32,8 @@ public class MainApp extends Application {
     private Stage primaryStage;
     private Injector injector;
     private I18nService i18n;
+    private NavigationConfig navConfig;
+    private UserManageService userManageService;
 
     @Override
     public void start(Stage primaryStage) {
@@ -37,6 +44,8 @@ public class MainApp extends Application {
         StageManager.setPrimaryStage(primaryStage);
 
         i18n = new I18nService();
+        navConfig = NavigationConfigLoader.load("/navigation.yaml");
+        userManageService = injector.getInstance(UserManageService.class);
 
         initializeServices();
 
@@ -87,6 +96,12 @@ public class MainApp extends Application {
             ShellController shell = loader.getController();
             shell.initServices(dialogService, loadingService, toastService);
             shell.setI18n(i18n);
+            shell.setNavigationConfig(navConfig);
+
+            RouteRegistry registry = new RouteRegistry();
+            registerRoutes(registry);
+            Router router = new Router(registry, null);
+            shell.setRouter(router);
 
             UserService userService = injector.getInstance(UserService.class);
             ShellViewModel shellViewModel = new ShellViewModel(userService);
@@ -107,6 +122,16 @@ public class MainApp extends Application {
         } catch (Exception e) {
             ExceptionHandler.handle(e, "Failed to show main shell");
         }
+    }
+
+    private void registerRoutes(RouteRegistry registry) {
+        registry.register("/home", "/fxml/home.fxml", "首页");
+        registry.register("/form", "/fxml/form.fxml", "表单示例");
+        registry.register("/list", "/fxml/list.fxml", "列表示例");
+        registry.register("/system/user/list", "/fxml/user_list.fxml", "用户列表");
+        registry.register("/system/user/detail/:id", "/fxml/user_detail.fxml", "用户详情");
+        registry.register("/system/user/create", "/fxml/user_form.fxml", "新增用户");
+        registry.register("/system/role/list", "/fxml/role_list.fxml", "角色列表");
     }
 
     public static void main(String[] args) {

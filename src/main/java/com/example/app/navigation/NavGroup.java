@@ -7,10 +7,11 @@ import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.material2.Material2MZ;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +22,8 @@ public class NavGroup extends VBox {
     private final int level;
     private final HBox header;
     private final VBox content;
-    private final Label expandIcon;
-    private final ImageView groupIcon;
+    private final FontIcon expandIcon;
+    private final FontIcon groupIcon;
     private final Label groupLabel;
 
     private final BooleanProperty expanded = new SimpleBooleanProperty(false);
@@ -39,35 +40,28 @@ public class NavGroup extends VBox {
 
         header = new HBox();
         header.getStyleClass().add("nav-group-header");
-        header.getStyleClass().add("level-" + level);
+        header.setStyle("-fx-spacing: 8; -fx-alignment: center-left; -fx-cursor: hand;");
 
-        expandIcon = new Label("▶");
+        expandIcon = new FontIcon(Material2MZ.PLUS);
         expandIcon.getStyleClass().add("nav-expand-icon");
+        expandIcon.setIconSize(14);
 
-        groupIcon = new ImageView();
+        groupIcon = new FontIcon(getIcon(node.getIcon()));
         groupIcon.getStyleClass().add("nav-icon");
-        groupIcon.setFitWidth(16);
-        groupIcon.setFitHeight(16);
-        groupIcon.setPreserveRatio(true);
-        if (node.getIcon() != null) {
-            try {
-                groupIcon.setImage(new javafx.scene.image.Image(
-                        getClass().getResourceAsStream("/images/" + node.getIcon() + ".png")));
-            } catch (Exception e) {
-                groupIcon.setVisible(false);
-            }
-        } else {
-            groupIcon.setVisible(false);
-        }
+        groupIcon.setIconSize(16);
+        HBox.setMargin(groupIcon, new javafx.geometry.Insets(0, 8, 0, 0));
 
         groupLabel = new Label(node.getLabel());
         groupLabel.getStyleClass().add("nav-group-label");
         HBox.setHgrow(groupLabel, javafx.scene.layout.Priority.ALWAYS);
 
-        header.getChildren().addAll(expandIcon, groupIcon, groupLabel);
+        header.getChildren().addAll(groupIcon, groupLabel, expandIcon);
 
         content = new VBox();
         content.getStyleClass().add("nav-group-content");
+        content.setStyle("-fx-padding: 0 0 0 16px; -fx-spacing: 2;");
+        content.setVisible(false);
+        content.setManaged(false);
 
         getChildren().addAll(header, content);
 
@@ -75,27 +69,36 @@ public class NavGroup extends VBox {
 
         expanded.addListener((obs, old, val) -> {
             if (val) {
-                expandIcon.setText("▼");
+                expandIcon.setIconCode(Material2MZ.MINUS);
             } else {
-                expandIcon.setText("▶");
+                expandIcon.setIconCode(Material2MZ.PLUS);
             }
         });
 
         buildChildren();
+        
+        if (content.getChildren().isEmpty()) {
+            expandIcon.setVisible(false);
+            expandIcon.setManaged(false);
+        }
     }
 
     private void buildChildren() {
         for (NavigationNode child : node.getChildren()) {
+            if (!child.isShowInNav()) {
+                continue;
+            }
+
             if (child.hasPath() || child.hasTabId()) {
                 if (child.hasTabId()) {
                     continue;
                 }
-                NavItem item = new NavItem(child);
+                NavItem item = new NavItem(child, level + 1);
                 items.add(item);
                 content.getChildren().add(item);
 
                 List<NavigationNode> subTabs = child.getChildren().stream()
-                        .filter(NavigationNode::hasTabId)
+                        .filter(n -> n.isShowInNav() && n.hasTabId())
                         .collect(java.util.stream.Collectors.toList());
                 if (!subTabs.isEmpty()) {
                     NavSubItems subItems = new NavSubItems(subTabs);
@@ -227,5 +230,19 @@ public class NavGroup extends VBox {
             }
         }
         return false;
+    }
+
+    private org.kordamp.ikonli.Ikon getIcon(String iconName) {
+        if (iconName == null) return Material2MZ.SEARCH;
+        return switch (iconName) {
+            case "home" -> Material2MZ.SEARCH;
+            case "settings" -> Material2MZ.SEARCH;
+            case "business" -> Material2MZ.WORK_OUTLINE;
+            case "user", "user-list" -> Material2MZ.PEOPLE_OUTLINE;
+            case "user-detail" -> Material2MZ.PHOTO_CAMERA;
+            case "form" -> Material2MZ.THUMB_UP;
+            case "list" -> Material2MZ.VIEW_LIST;
+            default -> Material2MZ.SEARCH;
+        };
     }
 }

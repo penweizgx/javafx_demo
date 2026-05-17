@@ -8,7 +8,11 @@ public class RouteRegistry {
     private final List<RouteDefinition> routes = new ArrayList<>();
 
     public void register(String pattern, String fxmlPath) {
-        routes.add(new RouteDefinition(pattern, fxmlPath));
+        routes.add(new RouteDefinition(pattern, fxmlPath, null));
+    }
+
+    public void register(String pattern, String fxmlPath, String label) {
+        routes.add(new RouteDefinition(pattern, fxmlPath, label));
     }
 
     public RouteMatch match(String path) {

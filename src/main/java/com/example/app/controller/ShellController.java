@@ -5,6 +5,9 @@ import com.example.app.ViewManager;
 import com.example.app.exception.ExceptionHandler;
 import com.example.app.i18n.I18nService;
 import com.example.app.model.User;
+import com.example.app.navigation.*;
+import com.example.app.router.Router;
+import com.example.app.router.RouteRegistry;
 import com.example.app.service.DialogService;
 import com.example.app.service.LoadingService;
 import com.example.app.service.ToastService;
@@ -40,7 +43,9 @@ public class ShellController {
     @FXML
     private Label brandLabel;
     @FXML
-    private Button btnHome, btnForm, btnList, btnSystem, btnTheme;
+    private VBox navContainer;
+    @FXML
+    private Button btnSystem, btnTheme;
     @FXML
     private Label userNameLabel;
     @FXML
@@ -52,12 +57,13 @@ public class ShellController {
     private ThemeService themeService;
     private I18nService i18n;
 
+    private NavigationPane navigationPane;
+    private Router router;
+    private NavigationConfig navConfig;
+
     private boolean dark = false;
 
     private final Map<String, Tab> tabMap = new HashMap<>();
-    private final Map<String, String> pageNames = new HashMap<>();
-    private final Map<String, Button> menuButtonMap = new HashMap<>();
-    private String currentSelectedPageId = null;
 
     public ShellController() {
     }
@@ -81,6 +87,14 @@ public class ShellController {
         this.i18n = i18n;
     }
 
+    public void setNavigationConfig(NavigationConfig config) {
+        this.navConfig = config;
+    }
+
+    public void setRouter(Router router) {
+        this.router = router;
+    }
+
     private void setupBindings() {
         userNameLabel.textProperty().bind(viewModel.getUserName());
         userNameLabel.visibleProperty().bind(viewModel.getUserLoaded());
@@ -90,8 +104,48 @@ public class ShellController {
     @FXML
     public void initialize() {
         initializeBrand();
-        initializeNavigation();
         initializeButtons();
+    }
+
+    public void initNavigation() {
+        if (navConfig != null && navContainer != null) {
+            navigationPane = new NavigationPane(navConfig);
+            navContainer.getChildren().clear();
+            navContainer.getChildren().add(navigationPane);
+
+            if (router == null) {
+                RouteRegistry registry = new RouteRegistry();
+                registerRoutes(registry, navConfig);
+                router = new Router(registry);
+            }
+            router.setTabPane(tabPane);
+
+            subscribeEvents();
+        }
+    }
+
+    private void registerRoutes(RouteRegistry registry, NavigationConfig config) {
+        for (NavigationNode root : config.getRoots()) {
+            registerNodeRoutes(registry, root);
+        }
+    }
+
+    private void registerNodeRoutes(RouteRegistry registry, NavigationNode node) {
+        if (node.hasPath() && node.getFxml() != null) {
+            registry.register(node.getPath(), node.getFxml());
+        }
+        for (NavigationNode child : node.getChildren()) {
+            registerNodeRoutes(registry, child);
+        }
+    }
+
+    private void subscribeEvents() {
+        EventBus.getInstance().subscribe(NavigationClickEvent.class, event -> {
+            String path = event.getPath();
+            if (path != null && router != null) {
+                router.navigate(path, event.getParams());
+            }
+        });
     }
 
     private void initializeBrand() {
@@ -115,44 +169,8 @@ public class ShellController {
         }
     }
 
-    private void initializeNavigation() {
-        if (i18n != null) {
-            pageNames.put("home", i18n.getString("shell.menu.home"));
-            pageNames.put("form", i18n.getString("shell.menu.form"));
-            pageNames.put("list", i18n.getString("shell.menu.list"));
-        } else {
-            pageNames.put("home", "首页");
-            pageNames.put("form", "表单");
-            pageNames.put("list", "列表");
-        }
-
-        btnHome.setText(pageNames.get("home"));
-        btnForm.setText(pageNames.get("form"));
-        btnList.setText(pageNames.get("list"));
-
-        menuButtonMap.put("home", btnHome);
-        menuButtonMap.put("form", btnForm);
-        menuButtonMap.put("list", btnList);
-
-        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
-            if (newTab != null) {
-                String pageId = (String) newTab.getUserData();
-                if (pageId != null) {
-                    updateMenuSelection(pageId);
-                }
-            } else {
-                clearMenuSelection();
-            }
-        });
-    }
-
     private void initializeButtons() {
-        btnHome.setOnAction(e -> showTab("home"));
-        btnForm.setOnAction(e -> showTab("form"));
-        btnList.setOnAction(e -> showTab("list"));
-
         btnSystem.setOnAction(e -> {
-            // Placeholder - no action yet
         });
 
         btnTheme.setOnAction(e -> {
@@ -213,58 +231,55 @@ public class ShellController {
     }
 
     public void showTab(String pageId) {
+        if (router != null) {
+            router.navigate("/" + pageId);
+        } else {
+            legacyShowTab(pageId);
+        }
+    }
+
+    private void legacyShowTab(String pageId) {
         try {
             if (tabMap.containsKey(pageId)) {
                 Tab existingTab = tabMap.get(pageId);
                 tabPane.getSelectionModel().select(existingTab);
-                updateMenuSelection(pageId);
                 return;
             }
 
             Parent pageContent = ViewManager.load(pageId);
             Tab tab = new Tab();
-            tab.setText(pageNames.getOrDefault(pageId, pageId));
+            tab.setText(pageId);
             tab.setContent(pageContent);
             tab.setClosable(true);
             tab.setUserData(pageId);
 
-            tab.setOnClosed(e -> {
-                tabMap.remove(pageId);
-                if (pageId.equals(currentSelectedPageId)) {
-                    clearMenuSelection();
-                }
-            });
+            tab.setOnClosed(e -> tabMap.remove(pageId));
 
             tabMap.put(pageId, tab);
             tabPane.getTabs().add(tab);
             tabPane.getSelectionModel().select(tab);
-            updateMenuSelection(pageId);
         } catch (IOException e) {
             ExceptionHandler.handle(e, "Failed to load page: " + pageId);
             if (toast != null) {
-                String msg = i18n != null ? i18n.getString("toast.page.load.failed", pageId) : "加载页面失败: " + pageId;
-                toast.show(msg);
+                toast.show("加载页面失败: " + pageId);
             }
         }
     }
 
-    private void updateMenuSelection(String pageId) {
-        clearMenuSelection();
-        Button menuButton = menuButtonMap.get(pageId);
-        if (menuButton != null) {
-            menuButton.getStyleClass().add("menu-selected");
-            currentSelectedPageId = pageId;
-        }
-    }
-
-    private void clearMenuSelection() {
-        for (Button btn : menuButtonMap.values()) {
-            btn.getStyleClass().remove("menu-selected");
-        }
-        currentSelectedPageId = null;
-    }
-
     public void showInitialTab(String pageId) {
-        showTab(pageId);
+        initNavigation();
+        if (router != null) {
+            router.navigate("/home");
+        } else {
+            legacyShowTab(pageId);
+        }
+    }
+
+    public NavigationPane getNavigationPane() {
+        return navigationPane;
+    }
+
+    public Router getRouter() {
+        return router;
     }
 }

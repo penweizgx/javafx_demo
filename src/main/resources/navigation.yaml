@@ -1,4 +1,5 @@
 navigation:
+  # 首页 - 全局导航项，始终显示
   - id: home
     label: 首页
     labelKey: nav.home
@@ -11,6 +12,7 @@ navigation:
       singleton: true
       closable: false
 
+  # 系统管理模块
   - id: system
     label: 系统
     labelKey: nav.system
@@ -21,6 +23,7 @@ navigation:
         label: 用户管理
         labelKey: nav.user.mgmt
         children:
+          # 用户列表 - 功能页面，在导航栏显示
           - id: user-list
             label: 用户列表
             labelKey: nav.user.list
@@ -30,33 +33,42 @@ navigation:
             options:
               cacheable: true
               closable: true
+          # 用户详情 - 页面内部元素，不在导航栏显示
+          # 通过用户列表点击进入，支持Tab切换
           - id: user-detail
             label: 用户详情
             labelKey: nav.user.detail
             path: /system/user/detail/:id
             fxml: /fxml/user_detail.fxml
             icon: user-detail
+            showInNav: false  # 不在导航栏显示
             options:
               cacheable: false
               supportsSubPage: true
             children:
+              # 页面内部Tab项，不在导航栏显示
               - id: user-basic
                 label: 基本信息
                 labelKey: nav.user.basic
                 tabId: basic
+                showInNav: false  # Tab项不在导航栏显示
               - id: user-history
                 label: 操作记录
                 labelKey: nav.user.history
                 tabId: history
+                showInNav: false  # Tab项不在导航栏显示
               - id: user-permission
                 label: 权限设置
                 labelKey: nav.user.permission
                 tabId: permission
+                showInNav: false  # Tab项不在导航栏显示
+          # 新增用户 - 页面内操作，不在导航栏显示
           - id: user-create
             label: 新增用户
             labelKey: nav.user.create
             path: /system/user/create
             fxml: /fxml/user_form.fxml
+            showInNav: false  # 页面内操作元素
             options:
               singleton: true
               confirmLeave: true
@@ -70,6 +82,7 @@ navigation:
             path: /system/role/list
             fxml: /fxml/role_list.fxml
 
+  # 业务模块
   - id: business
     label: 业务
     labelKey: nav.business

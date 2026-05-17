@@ -34,10 +34,8 @@
         <center>
             <BorderPane>
                 <left>
-                    <VBox styleClass="aside-nav" prefWidth="240" spacing="4">
-                        <Button fx:id="btnHome" styleClass="nav-item" maxWidth="Infinity" alignment="CENTER_LEFT"/>
-                        <Button fx:id="btnForm" styleClass="nav-item" maxWidth="Infinity" alignment="CENTER_LEFT"/>
-                        <Button fx:id="btnList" styleClass="nav-item" maxWidth="Infinity" alignment="CENTER_LEFT"/>
+                    <VBox fx:id="navContainer" styleClass="aside-nav" prefWidth="240">
+                        <!-- NavigationPane will be injected here -->
                     </VBox>
                 </left>
                 <center>

@@ -4,52 +4,50 @@ import javafx.animation.RotateTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.material2.Material2MZ;
 
 import java.util.List;
 
 public class NavItem extends HBox {
 
     private final NavigationNode node;
-    private final ImageView icon;
+    private final FontIcon icon;
     private final Label label;
-    private final Label expandIcon;
+    private final FontIcon expandIcon;
+    private final int level;
 
     private final BooleanProperty selected = new SimpleBooleanProperty(false);
     private NavSubItems subItems;
     private boolean subItemsExpanded = false;
 
     public NavItem(NavigationNode node) {
-        this.node = node;
-        getStyleClass().add("nav-item");
+        this(node, 1);
+    }
 
-        expandIcon = new Label("▶");
+    public NavItem(NavigationNode node, int level) {
+        this.node = node;
+        this.level = level;
+        getStyleClass().add("nav-item");
+        setStyle("-fx-spacing: 8; -fx-alignment: center-left; -fx-cursor: hand;");
+
+        expandIcon = new FontIcon(Material2MZ.PLUS);
         expandIcon.getStyleClass().add("nav-expand-icon");
+        expandIcon.setIconSize(12);
         expandIcon.setVisible(node.hasChildren() && node.getChildren().stream().anyMatch(NavigationNode::hasTabId));
 
-        icon = new ImageView();
+        icon = new FontIcon(getIcon(node.getIcon()));
         icon.getStyleClass().add("nav-icon");
-        icon.setFitWidth(16);
-        icon.setFitHeight(16);
-        icon.setPreserveRatio(true);
-        if (node.getIcon() != null) {
-            try {
-                icon.setImage(new javafx.scene.image.Image(
-                        getClass().getResourceAsStream("/images/" + node.getIcon() + ".png")));
-            } catch (Exception e) {
-                icon.setVisible(false);
-            }
-        } else {
-            icon.setVisible(false);
-        }
+        icon.setIconSize(16);
+        HBox.setMargin(icon, new javafx.geometry.Insets(0, 8, 0, 0));
 
         label = new Label(node.getLabel());
         label.getStyleClass().add("nav-item-label");
         HBox.setHgrow(label, javafx.scene.layout.Priority.ALWAYS);
 
-        getChildren().addAll(expandIcon, icon, label);
+        getChildren().addAll(icon, label, expandIcon);
 
         setOnMouseClicked(e -> onClick());
 
@@ -80,9 +78,9 @@ public class NavItem extends HBox {
     private void toggleSubItems() {
         subItemsExpanded = !subItemsExpanded;
         if (subItemsExpanded) {
-            expandIcon.setText("▼");
+            expandIcon.setIconCode(Material2MZ.MINUS);
         } else {
-            expandIcon.setText("▶");
+            expandIcon.setIconCode(Material2MZ.PLUS);
         }
         EventBus.getInstance().publish(new SubItemsToggleEvent(this, subItemsExpanded));
     }
@@ -121,7 +119,7 @@ public class NavItem extends HBox {
 
     public void setSubItemsExpanded(boolean expanded) {
         this.subItemsExpanded = expanded;
-        expandIcon.setText(expanded ? "▼" : "▶");
+        expandIcon.setIconCode(expanded ? Material2MZ.MINUS : Material2MZ.PLUS);
     }
 
     public static class SubItemsToggleEvent {
@@ -135,5 +133,19 @@ public class NavItem extends HBox {
 
         public NavItem getItem() { return item; }
         public boolean isExpanded() { return expanded; }
+    }
+
+    private org.kordamp.ikonli.Ikon getIcon(String iconName) {
+        if (iconName == null) return Material2MZ.SEARCH;
+        return switch (iconName) {
+            case "home" -> Material2MZ.SEARCH;
+            case "settings" -> Material2MZ.SEARCH;
+            case "business" -> Material2MZ.WORK_OUTLINE;
+            case "user", "user-list" -> Material2MZ.PEOPLE_OUTLINE;
+            case "user-detail" -> Material2MZ.PHOTO_CAMERA;
+            case "form" -> Material2MZ.THUMB_UP;
+            case "list" -> Material2MZ.VIEW_LIST;
+            default -> Material2MZ.SEARCH;
+        };
     }
 }

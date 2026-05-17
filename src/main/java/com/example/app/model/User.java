@@ -1,24 +1,21 @@
 package com.example.app.model;
 
 import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
-    /**
-     * 员工名字
-     */
+    private String id;
     private String name;
-    /**
-     * 头像
-     */
     private String avatar;
-    /**
-     * 机构范围
-     */
     private OrgBound orgBound;
-
-    /**
-     * 机构名称
-     */
     private String orgName;
+    private String email;
+    private String phone;
+    private String status;
+    private String role;
+    private String createTime;
 }

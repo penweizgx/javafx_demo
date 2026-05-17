@@ -18,6 +18,7 @@ public class NavigationNode {
     private boolean leaf;
     private String tabId;
     private String fxml;
+    private boolean showInNav = true;
 
     private List<NavigationNode> children = new ArrayList<>();
     private NavigationNode parent;
