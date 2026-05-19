@@ -1,40 +1,66 @@
 package com.example.app.service;
 
-import javafx.animation.FadeTransition;
+import atlantafx.base.controls.Notification;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
 import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 public class ToastService {
-    private final Pane layer;
+    private final StackPane layer;
 
     public ToastService(StackPane root) {
-        layer = new Pane();
+        layer = new StackPane();
         layer.setPickOnBounds(false);
-        layer.getStyleClass().add("toast-layer");
         Platform.runLater(() -> root.getChildren().add(layer));
     }
 
     public void show(String text) {
-        Platform.runLater(() -> {
-            Label lbl = new Label(text);
-            lbl.getStyleClass().addAll("toast");
-            lbl.setLayoutX(20);
-            lbl.setLayoutY(20 + layer.getChildren().size() * 54);
-            layer.getChildren().add(lbl);
+        show(text, null);
+    }
 
-            FadeTransition in = new FadeTransition(Duration.millis(200), lbl);
-            in.setFromValue(0); in.setToValue(1);
-            PauseTransition wait = new PauseTransition(Duration.seconds(2));
-            FadeTransition out = new FadeTransition(Duration.millis(200), lbl);
-            out.setFromValue(1); out.setToValue(0);
-            SequentialTransition seq = new SequentialTransition(in, wait, out);
-            seq.setOnFinished(e -> layer.getChildren().remove(lbl));
-            seq.play();
+    public void show(String text, String styleClass) {
+        Platform.runLater(() -> {
+            Notification ntf = new Notification(text);
+            ntf.getStyleClass().add(Styles.ELEVATED_1);
+            if (styleClass != null) {
+                ntf.getStyleClass().add(styleClass);
+            }
+            ntf.setPrefHeight(Region.USE_PREF_SIZE);
+            ntf.setMaxHeight(Region.USE_PREF_SIZE);
+            StackPane.setAlignment(ntf, Pos.TOP_RIGHT);
+            StackPane.setMargin(ntf, new Insets(10, 10, 0, 0));
+            ntf.setOnClose(e -> removeNotification(ntf));
+
+            layer.getChildren().add(ntf);
+            Animations.slideInDown(ntf, Duration.millis(250)).playFromStart();
+
+            PauseTransition autoClose = new PauseTransition(Duration.seconds(3));
+            autoClose.setOnFinished(e -> removeNotification(ntf));
+            autoClose.play();
         });
+    }
+
+    private void removeNotification(Notification ntf) {
+        var out = Animations.slideOutUp(ntf, Duration.millis(250));
+        out.setOnFinished(f -> layer.getChildren().remove(ntf));
+        out.playFromStart();
+    }
+
+    public void showSuccess(String text) {
+        show(text, Styles.SUCCESS);
+    }
+
+    public void showWarning(String text) {
+        show(text, Styles.WARNING);
+    }
+
+    public void showDanger(String text) {
+        show(text, Styles.DANGER);
     }
 }

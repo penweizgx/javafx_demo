@@ -1,5 +1,7 @@
 package com.example.app.controller;
 
+import atlantafx.base.controls.Popover;
+import atlantafx.base.theme.Styles;
 import com.example.app.ThemeService;
 import com.example.app.ViewManager;
 import com.example.app.exception.ExceptionHandler;
@@ -25,8 +27,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -179,24 +179,20 @@ public class ShellController {
         });
     }
 
+    private Popover userPopover;
+
     private void showUserDetails() {
         User currentUser = viewModel.getCurrentUserValue();
         if (currentUser == null)
             return;
 
-        VBox content = new VBox(20);
-        content.setPadding(new Insets(30));
-        content.getStyleClass().add("popup-content");
-        content.setAlignment(Pos.TOP_LEFT);
-        content.setMaxSize(400, 300);
-        content.setStyle(
-                "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+        VBox content = new VBox(10);
+        content.setPadding(new Insets(12));
 
-        String titleText = i18n != null ? i18n.getString("user.details") : "用户详情";
-        Label title = new Label(titleText);
-        title.setFont(Font.font("System", FontWeight.BOLD, 18));
+        Label title = new Label(i18n != null ? i18n.getString("user.details") : "用户详情");
+        title.getStyleClass().add(Styles.TITLE_4);
 
-        VBox infoBox = new VBox(10);
+        VBox infoBox = new VBox(6);
         String nameLabel = i18n != null ? i18n.getString("user.name") : "姓名:";
         String orgLabel = i18n != null ? i18n.getString("user.org") : "机构:";
         infoBox.getChildren().addAll(
@@ -204,23 +200,22 @@ public class ShellController {
                 createDetailRow(orgLabel, currentUser.getOrgName()));
 
         Button closeBtn = new Button("关闭");
-        closeBtn.getStyleClass().add("primary-button");
-        closeBtn.setOnAction(e -> {
-            Runnable closer = (Runnable) content.getProperties().get("dialog-complete");
-            if (closer != null)
-                closer.run();
-        });
+        closeBtn.getStyleClass().addAll(Styles.BUTTON_OUTLINED);
+        closeBtn.setOnAction(e -> userPopover.hide());
 
         content.getChildren().addAll(title, infoBox, closeBtn);
-        dialog.showModal(content, true);
+
+        userPopover = new Popover(content);
+        userPopover.setHeaderAlwaysVisible(false);
+        userPopover.show(userNameLabel);
     }
 
     private HBox createDetailRow(String label, String value) {
         Label l = new Label(label);
         l.setPrefWidth(100);
-        l.setStyle("-fx-text-fill: #666;");
+        l.getStyleClass().add(Styles.TEXT_MUTED);
         Label v = new Label(value);
-        v.setStyle("-fx-font-weight: bold;");
+        v.getStyleClass().add(Styles.TEXT_BOLD);
         return new HBox(10, l, v);
     }
 

@@ -23,8 +23,8 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 
                 <HBox fx:id="systemArea" styleClass="system-area" alignment="CENTER_RIGHT" spacing="8">
-                    <Button fx:id="btnSystem" styleClass="flat"/>
-                    <Button fx:id="btnTheme" styleClass="flat"/>
+                    <Button fx:id="btnSystem" styleClass="button-outlined"/>
+                    <Button fx:id="btnTheme" styleClass="button-outlined"/>
                     <Label fx:id="userNameLabel"/>
                 </HBox>
                 

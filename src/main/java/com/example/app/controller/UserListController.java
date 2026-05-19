@@ -199,15 +199,48 @@ public class UserListController {
     }
 
     private void deleteUser(User user) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("确认删除");
-        alert.setHeaderText("删除用户");
-        alert.setContentText("确定要删除用户 " + user.getName() + " 吗？");
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK && viewModel != null) {
-                viewModel.deleteUser(user);
-            }
+        VBox content = new VBox(16);
+        content.setPadding(new Insets(24));
+        content.setPrefWidth(360);
+
+        Label msgLabel = new Label("确定要删除用户 " + user.getName() + " 吗？");
+        msgLabel.setWrapText(true);
+
+        HBox btnBox = new HBox(8);
+        btnBox.setAlignment(Pos.CENTER_RIGHT);
+
+        Button cancelBtn = new Button("取消");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
+        cancelBtn.setOnAction(e -> dialogService.closeAll());
+
+        Button confirmBtn = new Button("删除");
+        confirmBtn.getStyleClass().addAll(Styles.ACCENT, Styles.DANGER);
+        confirmBtn.setOnAction(e -> {
+            dialogService.closeAll();
+            viewModel.deleteUser(user);
         });
+
+        btnBox.getChildren().addAll(cancelBtn, confirmBtn);
+        content.getChildren().addAll(msgLabel, btnBox);
+
+        ensureDialogService();
+        dialogService.showModal(content, true);
+    }
+
+    private void ensureDialogService() {
+        if (dialogService == null) {
+            try {
+                dialogService = AppContext.get().getService(DialogService.class);
+            } catch (Exception e) {
+                javafx.scene.Parent parent = root.getParent();
+                while (parent != null && !(parent instanceof StackPane)) {
+                    parent = parent.getParent();
+                }
+                if (parent instanceof StackPane stackPane) {
+                    dialogService = new DialogService(stackPane);
+                }
+            }
+        }
     }
 
     private void navigateToDetail(User user) {

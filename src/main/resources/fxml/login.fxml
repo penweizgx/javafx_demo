@@ -27,7 +27,7 @@
                 <String fx:value="caption" />
             </styleClass>
         </Label>
-        <TextField fx:id="usernameField" promptText="Enter your username" />
+        <TextField fx:id="usernameField" promptText="Enter your username" styleClass="rounded" />
     </VBox>
 
     <VBox spacing="5.0" maxWidth="300.0">
@@ -36,7 +36,7 @@
                 <String fx:value="caption" />
             </styleClass>
         </Label>
-        <PasswordField fx:id="passwordField" promptText="Enter your password" />
+        <PasswordField fx:id="passwordField" promptText="Enter your password" styleClass="rounded" />
     </VBox>
 
     <CheckBox fx:id="rememberMeCheckBox" text="Remember Me" maxWidth="300.0" />
