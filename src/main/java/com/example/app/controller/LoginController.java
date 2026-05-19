@@ -3,6 +3,7 @@ package com.example.app.controller;
 import com.example.app.viewmodel.LoginViewModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -14,6 +15,9 @@ public class LoginController {
 
     @FXML
     private PasswordField passwordField;
+
+    @FXML
+    private CheckBox rememberMeCheckBox;
 
     @FXML
     private Label errorLabel;
@@ -34,9 +38,7 @@ public class LoginController {
     private void setupBindings() {
         usernameField.textProperty().bindBidirectional(viewModel.getUsername());
         passwordField.textProperty().bindBidirectional(viewModel.getPassword());
-
-        usernameField.setText("15828245173");
-        passwordField.setText("351688");
+        rememberMeCheckBox.selectedProperty().bindBidirectional(viewModel.getRememberMe());
 
         errorLabel.textProperty().bind(viewModel.getErrorMessage());
         errorLabel.visibleProperty().bind(viewModel.getErrorMessage().isNotEmpty());

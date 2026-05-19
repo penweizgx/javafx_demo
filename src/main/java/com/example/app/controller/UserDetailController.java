@@ -3,10 +3,11 @@ package com.example.app.controller;
 import atlantafx.base.theme.Styles;
 import com.example.app.AppContext;
 import com.example.app.model.User;
+import com.example.app.util.UserStatusHelper;
 import com.example.app.navigation.EventBus;
 import com.example.app.navigation.NavigationClickEvent;
+import com.example.app.navigation.ParamReceiver;
 import com.example.app.navigation.RouteParams;
-import com.example.app.router.Router;
 import com.example.app.service.UserManageService;
 import com.example.app.viewmodel.UserDetailViewModel;
 import javafx.fxml.FXML;
@@ -15,7 +16,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class UserDetailController implements Router.ParamReceiver {
+public class UserDetailController implements ParamReceiver {
 
     @FXML
     private VBox root;
@@ -109,9 +110,6 @@ public class UserDetailController implements Router.ParamReceiver {
         }
     }
 
-    private void setupBindings() {
-    }
-
     private void setupEventHandlers() {
         if (backBtn != null) {
             backBtn.setOnAction(e -> navigateBack());
@@ -170,29 +168,9 @@ public class UserDetailController implements Router.ParamReceiver {
 
     private void updateStatusBadge(String status) {
         if (statusBadge == null) return;
-        statusBadge.setText(getStatusText(status));
+        statusBadge.setText(UserStatusHelper.getStatusText(status));
         statusBadge.getStyleClass().clear();
-        statusBadge.getStyleClass().addAll("badge", getStatusStyle(status));
-    }
-
-    private String getStatusText(String status) {
-        if (status == null) return "";
-        return switch (status) {
-            case "active" -> "正常";
-            case "inactive" -> "停用";
-            case "pending" -> "待审核";
-            default -> status;
-        };
-    }
-
-    private String getStatusStyle(String status) {
-        if (status == null) return "";
-        return switch (status) {
-            case "active" -> Styles.SUCCESS;
-            case "inactive" -> Styles.DANGER;
-            case "pending" -> Styles.WARNING;
-            default -> "";
-        };
+        statusBadge.getStyleClass().addAll("badge", UserStatusHelper.getStatusStyle(status));
     }
 
     private void updateEditMode(boolean editMode) {

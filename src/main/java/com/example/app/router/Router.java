@@ -7,6 +7,7 @@ import com.example.app.guard.GuardResult;
 import com.example.app.guard.NavigationGuard;
 import com.example.app.navigation.EventBus;
 import com.example.app.navigation.RouteChangeEvent;
+import com.example.app.navigation.ParamReceiver;
 import com.example.app.navigation.RouteParams;
 
 import javafx.application.Platform;
@@ -31,12 +32,9 @@ public class Router {
     private final HistoryManager historyManager;
     private final List<NavigationGuard> globalGuards = new ArrayList<>();
 
-    private final Map<String, Parent> pageCache = new HashMap<>();
     private final Map<String, Tab> tabByPath = new HashMap<>();
 
     private RouteHistory current;
-    private Runnable pendingNavigation;
-    private RouteParams pendingParams;
 
     public Router(RouteRegistry registry, TabPane tabPane) {
         this.registry = registry;
@@ -112,7 +110,6 @@ public class Router {
             Tab existingTab = tabByPath.get(path);
             if (existingTab != null) {
                 tabPane.getSelectionModel().select(existingTab);
-                updateTabParams(existingTab, params);
                 return;
             }
 
@@ -150,18 +147,10 @@ public class Router {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         loader.setControllerFactory(cls -> {
             try {
-                Object controller = AppContext.get().getService(cls);
-                if (controller instanceof ParamReceiver receiver && params != null) {
-                    receiver.receiveParams(params);
-                }
-                return controller;
+                return AppContext.get().getService(cls);
             } catch (Exception e) {
                 try {
-                    Object controller = cls.getDeclaredConstructor().newInstance();
-                    if (controller instanceof ParamReceiver receiver && params != null) {
-                        receiver.receiveParams(params);
-                    }
-                    return controller;
+                    return cls.getDeclaredConstructor().newInstance();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -176,21 +165,6 @@ public class Router {
         }
 
         return page;
-    }
-
-    private void updateTabParams(Tab tab, RouteParams params) {
-        Object controller = getTabController(tab);
-        if (controller instanceof ParamReceiver receiver) {
-            receiver.receiveParams(params);
-        }
-    }
-
-    private Object getTabController(Tab tab) {
-        javafx.scene.Node content = tab.getContent();
-        if (content instanceof Parent parent && content.getProperties().containsKey("fx:controller")) {
-            return content.getProperties().get("fx:controller");
-        }
-        return null;
     }
 
     private String getTabTitle(String path, RouteParams params, RouteMatch match) {
@@ -267,19 +241,4 @@ public class Router {
         }
     }
 
-    public void proceedNavigation() {
-        if (pendingNavigation != null) {
-            pendingNavigation.run();
-            pendingNavigation = null;
-            pendingParams = null;
-        }
-    }
-
-    public void clearCache() {
-        pageCache.clear();
-    }
-
-    public interface ParamReceiver {
-        void receiveParams(RouteParams params);
-    }
 }

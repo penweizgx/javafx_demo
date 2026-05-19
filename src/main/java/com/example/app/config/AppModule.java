@@ -16,6 +16,7 @@ import com.example.app.service.UserService;
 import com.example.app.service.impl.AuthServiceImpl;
 import com.example.app.service.impl.MockUserManageService;
 import com.example.app.service.impl.UserServiceImpl;
+import com.example.app.storage.CredentialStorage;
 import com.example.app.storage.TokenStorage;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -32,6 +33,7 @@ public class AppModule extends AbstractModule {
         bind(UserService.class).to(UserServiceImpl.class).in(Singleton.class);
         bind(UserManageService.class).to(MockUserManageService.class).in(Singleton.class);
         bind(TokenStorage.class).in(Singleton.class);
+        bind(CredentialStorage.class).in(Singleton.class);
         bind(I18nService.class).in(Singleton.class);
         bind(RouteRegistry.class).in(Singleton.class);
     }

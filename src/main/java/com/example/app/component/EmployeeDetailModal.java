@@ -2,6 +2,7 @@ package com.example.app.component;
 
 import atlantafx.base.theme.Styles;
 import com.example.app.model.User;
+import com.example.app.util.UserStatusHelper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -89,31 +90,11 @@ public class EmployeeDetailModal extends VBox {
         labelNode.setPrefWidth(80);
         labelNode.setStyle("-fx-text-fill: #666; -fx-font-size: 13px;");
 
-        Label badge = new Label(getStatusText(status));
-        badge.getStyleClass().addAll("badge", getStatusStyle(status));
+        Label badge = new Label(UserStatusHelper.getStatusText(status));
+        badge.getStyleClass().addAll("badge", UserStatusHelper.getStatusStyle(status));
 
         row.getChildren().addAll(labelNode, badge);
         return row;
-    }
-
-    private String getStatusText(String status) {
-        if (status == null) return "-";
-        return switch (status) {
-            case "active" -> "正常";
-            case "inactive" -> "停用";
-            case "pending" -> "待审核";
-            default -> status;
-        };
-    }
-
-    private String getStatusStyle(String status) {
-        if (status == null) return "";
-        return switch (status) {
-            case "active" -> Styles.SUCCESS;
-            case "inactive" -> Styles.DANGER;
-            case "pending" -> Styles.WARNING;
-            default -> "";
-        };
     }
 
     public void setOnClose(Runnable onClose) {

@@ -10,9 +10,8 @@ import com.example.app.exception.ExceptionHandler;
 import com.example.app.i18n.I18nService;
 import com.example.app.navigation.NavigationConfig;
 import com.example.app.navigation.NavigationConfigLoader;
-import com.example.app.router.RouteRegistry;
-import com.example.app.router.Router;
 import com.example.app.service.*;
+import com.example.app.storage.CredentialStorage;
 import com.example.app.viewmodel.LoginViewModel;
 import com.example.app.viewmodel.ShellViewModel;
 import com.example.app.viewmodel.UserDetailViewModel;
@@ -65,7 +64,8 @@ public class MainApp extends Application {
             LoginController controller = loader.getController();
 
             AuthService authService = injector.getInstance(AuthService.class);
-            LoginViewModel loginViewModel = new LoginViewModel(authService, i18n);
+            CredentialStorage credentialStorage = injector.getInstance(CredentialStorage.class);
+            LoginViewModel loginViewModel = new LoginViewModel(authService, i18n, credentialStorage);
             loginViewModel.setOnLoginSuccess(this::showMainShell);
             controller.setViewModel(loginViewModel);
 
@@ -98,11 +98,6 @@ public class MainApp extends Application {
             shell.setI18n(i18n);
             shell.setNavigationConfig(navConfig);
 
-            RouteRegistry registry = new RouteRegistry();
-            registerRoutes(registry);
-            Router router = new Router(registry, null);
-            shell.setRouter(router);
-
             UserService userService = injector.getInstance(UserService.class);
             ShellViewModel shellViewModel = new ShellViewModel(userService);
             shell.setViewModel(shellViewModel);
@@ -122,16 +117,6 @@ public class MainApp extends Application {
         } catch (Exception e) {
             ExceptionHandler.handle(e, "Failed to show main shell");
         }
-    }
-
-    private void registerRoutes(RouteRegistry registry) {
-        registry.register("/home", "/fxml/home.fxml", "首页");
-        registry.register("/form", "/fxml/form.fxml", "表单示例");
-        registry.register("/list", "/fxml/list.fxml", "列表示例");
-        registry.register("/system/user/list", "/fxml/user_list.fxml", "用户列表");
-        registry.register("/system/user/detail/:id", "/fxml/user_detail.fxml", "用户详情");
-        registry.register("/system/user/create", "/fxml/user_form.fxml", "新增用户");
-        registry.register("/system/role/list", "/fxml/role_list.fxml", "角色列表");
     }
 
     public static void main(String[] args) {

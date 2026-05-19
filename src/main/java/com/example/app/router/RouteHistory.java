@@ -11,7 +11,6 @@ public class RouteHistory {
     private final com.example.app.navigation.RouteParams params;
     private final Tab tab;
     private final long timestamp;
-    private int tabIndex;
 
     public RouteHistory(String path, com.example.app.navigation.RouteParams params, Tab tab) {
         this.path = path;

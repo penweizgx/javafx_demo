@@ -6,6 +6,7 @@ import atlantafx.base.theme.Styles;
 import com.example.app.AppContext;
 import com.example.app.component.EmployeeDetailModal;
 import com.example.app.model.User;
+import com.example.app.util.UserStatusHelper;
 import com.example.app.navigation.EventBus;
 import com.example.app.navigation.NavigationClickEvent;
 import com.example.app.navigation.RouteParams;
@@ -52,7 +53,6 @@ public class UserListController {
         UserManageService userService = AppContext.get().getService(UserManageService.class);
         this.viewModel = new UserListViewModel(userService);
         setupTable();
-        setupBindings();
         setupEventHandlers();
         bindViewModel();
         viewModel.loadUsers();
@@ -100,8 +100,8 @@ public class UserListController {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    Label badge = new Label(getStatusText(status));
-                    badge.getStyleClass().addAll("badge", getStatusStyle(status));
+                    Label badge = new Label(UserStatusHelper.getStatusText(status));
+                    badge.getStyleClass().addAll("badge", UserStatusHelper.getStatusStyle(status));
                     setGraphic(badge);
                 }
             }
@@ -144,36 +144,6 @@ public class UserListController {
             });
             return row;
         });
-    }
-
-    private String getStatusText(String status) {
-        return switch (status) {
-            case "active" -> "正常";
-            case "inactive" -> "停用";
-            case "pending" -> "待审核";
-            default -> status;
-        };
-    }
-
-    private String getStatusStyle(String status) {
-        return switch (status) {
-            case "active" -> Styles.SUCCESS;
-            case "inactive" -> Styles.DANGER;
-            case "pending" -> Styles.WARNING;
-            default -> "";
-        };
-    }
-
-    private void setupBindings() {
-        if (loadingIndicator != null) {
-            loadingIndicator.visibleProperty().bind(
-                viewModel != null ? viewModel.loadingProperty() : new javafx.beans.property.SimpleBooleanProperty(false)
-            );
-        }
-        if (errorLabel != null && viewModel != null) {
-            errorLabel.textProperty().bind(viewModel.errorMessageProperty());
-            errorLabel.visibleProperty().bind(Bindings.isNotEmpty(viewModel.errorMessageProperty()));
-        }
     }
 
     private void bindViewModel() {

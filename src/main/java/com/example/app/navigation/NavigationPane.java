@@ -9,7 +9,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.material2.Material2MZ;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,17 +102,19 @@ public class NavigationPane extends VBox {
         });
     }
 
+    private String extractBasePath(String path) {
+        return path.contains("#") ? path.substring(0, path.indexOf("#")) : path;
+    }
+
     public void selectByPath(String path) {
-        String basePath = path.contains("#") ? path.substring(0, path.indexOf("#")) : path;
-        TreeItem<NavigationNode> item = itemByPath.get(basePath);
+        TreeItem<NavigationNode> item = itemByPath.get(extractBasePath(path));
         if (item != null) {
             treeView.getSelectionModel().select(item);
         }
     }
 
     public void expandToPath(String path) {
-        String basePath = path.contains("#") ? path.substring(0, path.indexOf("#")) : path;
-        TreeItem<NavigationNode> item = itemByPath.get(basePath);
+        TreeItem<NavigationNode> item = itemByPath.get(extractBasePath(path));
         if (item != null) {
             TreeItem<NavigationNode> parent = item.getParent();
             while (parent != null && parent.getValue() != null) {
@@ -146,24 +147,10 @@ public class NavigationPane extends VBox {
                 setGraphic(null);
             } else {
                 setText(node.getLabel());
-                FontIcon icon = new FontIcon(getIcon(node.getIcon()));
-                icon.setIconSize(16);
+                FontIcon icon = NavigationIcons.createIcon(node.getIcon(), 16);
                 setGraphic(icon);
             }
         }
 
-        private static org.kordamp.ikonli.Ikon getIcon(String iconName) {
-            if (iconName == null) return Material2MZ.SEARCH;
-            return switch (iconName) {
-                case "home" -> Material2MZ.SEARCH;
-                case "settings" -> Material2MZ.SEARCH;
-                case "business" -> Material2MZ.WORK_OUTLINE;
-                case "user", "user-list" -> Material2MZ.PEOPLE_OUTLINE;
-                case "user-detail" -> Material2MZ.PHOTO_CAMERA;
-                case "form" -> Material2MZ.THUMB_UP;
-                case "list" -> Material2MZ.VIEW_LIST;
-                default -> Material2MZ.SEARCH;
-            };
         }
-    }
 }

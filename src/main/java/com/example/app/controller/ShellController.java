@@ -91,10 +91,6 @@ public class ShellController {
         this.navConfig = config;
     }
 
-    public void setRouter(Router router) {
-        this.router = router;
-    }
-
     private void setupBindings() {
         userNameLabel.textProperty().bind(viewModel.getUserName());
         userNameLabel.visibleProperty().bind(viewModel.getUserLoaded());
@@ -113,11 +109,9 @@ public class ShellController {
             navContainer.getChildren().clear();
             navContainer.getChildren().add(navigationPane);
 
-            if (router == null) {
-                RouteRegistry registry = new RouteRegistry();
-                registerRoutes(registry, navConfig);
-                router = new Router(registry);
-            }
+            RouteRegistry registry = new RouteRegistry();
+            registerRoutes(registry, navConfig);
+            router = new Router(registry);
             router.setTabPane(tabPane);
 
             subscribeEvents();

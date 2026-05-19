@@ -4,6 +4,7 @@ import com.example.app.executor.AsyncExecutor;
 import com.example.app.exception.ExceptionHandler;
 import com.example.app.model.User;
 import com.example.app.service.UserManageService;
+import com.example.app.util.UserStatusHelper;
 import javafx.beans.property.*;
 import lombok.Getter;
 
@@ -165,13 +166,6 @@ public class UserDetailViewModel extends ViewModelBase {
     }
 
     public String getStatusText() {
-        String s = status.get();
-        if (s == null) return "";
-        return switch (s) {
-            case "active" -> "正常";
-            case "inactive" -> "停用";
-            case "pending" -> "待审核";
-            default -> s;
-        };
+        return UserStatusHelper.getStatusText(status.get());
     }
 }
