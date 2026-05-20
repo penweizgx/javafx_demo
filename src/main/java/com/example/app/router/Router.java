@@ -6,6 +6,7 @@ import com.example.app.exception.ExceptionHandler;
 import com.example.app.guard.GuardResult;
 import com.example.app.guard.NavigationGuard;
 import com.example.app.navigation.EventBus;
+import com.example.app.navigation.NavigationIcons;
 import com.example.app.navigation.RouteChangeEvent;
 import com.example.app.navigation.ParamReceiver;
 import com.example.app.navigation.RouteParams;
@@ -16,6 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import lombok.extern.slf4j.Slf4j;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,6 +53,7 @@ public class Router {
 
     public void setTabPane(TabPane tabPane) {
         this.tabPane = tabPane;
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         setupTabListener();
     }
 
@@ -117,8 +120,14 @@ public class Router {
 
             Tab tab = new Tab();
             tab.setText(getTabTitle(path, params, match));
+            if (match.getIcon() != null) {
+                FontIcon icon = NavigationIcons.createIcon(match.getIcon(), 14);
+                if (icon != null) {
+                    tab.setGraphic(icon);
+                }
+            }
             tab.setContent(page);
-            tab.setClosable(true);
+            tab.setClosable(isClosable(path));
             tab.setUserData(new RouteHistory(path, params, tab));
 
             tab.setOnClosed(e -> {
@@ -127,10 +136,10 @@ public class Router {
                 EventBus.getInstance().publish(RouteChangeEvent.tabClose(path, tab));
             });
 
+            tabByPath.put(path, tab);
+
             tabPane.getTabs().add(tab);
             tabPane.getSelectionModel().select(tab);
-
-            tabByPath.put(path, tab);
 
             RouteHistory history = new RouteHistory(path, params, tab);
             historyManager.push(history);
@@ -173,6 +182,10 @@ public class Router {
         }
         String[] parts = path.split("/");
         return parts.length > 0 ? parts[parts.length - 1] : path;
+    }
+
+    private boolean isClosable(String path) {
+        return !"/home".equals(path);
     }
 
     private void setupTabListener() {

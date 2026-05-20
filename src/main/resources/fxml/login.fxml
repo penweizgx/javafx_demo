@@ -15,31 +15,31 @@
         <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
     </padding>
 
-    <Label text="Login">
+    <Label fx:id="titleLabel">
         <styleClass>
             <String fx:value="title-1" />
         </styleClass>
     </Label>
 
     <VBox spacing="5.0" maxWidth="300.0">
-        <Label text="Username">
+        <Label fx:id="usernameLabel">
             <styleClass>
                 <String fx:value="caption" />
             </styleClass>
         </Label>
-        <TextField fx:id="usernameField" promptText="Enter your username" styleClass="rounded" />
+        <TextField fx:id="usernameField" styleClass="rounded" />
     </VBox>
 
     <VBox spacing="5.0" maxWidth="300.0">
-        <Label text="Password">
+        <Label fx:id="passwordLabel">
             <styleClass>
                 <String fx:value="caption" />
             </styleClass>
         </Label>
-        <PasswordField fx:id="passwordField" promptText="Enter your password" styleClass="rounded" />
+        <PasswordField fx:id="passwordField" styleClass="rounded" />
     </VBox>
 
-    <CheckBox fx:id="rememberMeCheckBox" text="Remember Me" maxWidth="300.0" />
+    <CheckBox fx:id="rememberMeCheckBox" maxWidth="300.0" />
 
     <Label fx:id="errorLabel" textFill="RED" wrapText="true" visible="false">
         <styleClass>
@@ -47,11 +47,11 @@
         </styleClass>
     </Label>
 
-    <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false" onAction="#onLogin" text="Login" prefWidth="300.0">
+    <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false" onAction="#onLogin" prefWidth="300.0">
         <styleClass>
             <String fx:value="accent" />
             <String fx:value="success" />
         </styleClass>
     </Button>
-    
+
 </VBox>

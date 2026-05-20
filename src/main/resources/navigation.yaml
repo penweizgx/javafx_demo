@@ -19,6 +19,16 @@ navigation:
     icon: settings
     expanded: true
     children:
+      # 系统配置 - 系统模块第一项
+      - id: system-config
+        label: 系统配置
+        labelKey: nav.system.config
+        path: /system/config
+        fxml: /fxml/system_config.fxml
+        icon: settings
+        options:
+          cacheable: true
+          closable: true
       - id: user-mgmt
         label: 用户管理
         labelKey: nav.user.mgmt

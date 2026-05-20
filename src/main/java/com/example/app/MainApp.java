@@ -28,6 +28,7 @@ import atlantafx.base.theme.PrimerLight;
 
 public class MainApp extends Application {
 
+    private static MainApp instance;
     private Stage primaryStage;
     private Injector injector;
     private I18nService i18n;
@@ -37,6 +38,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        instance = this;
 
         injector = Guice.createInjector(new AppModule());
         AppContext.init(injector);
@@ -57,6 +59,16 @@ public class MainApp extends Application {
     }
 
     private void showLogin() {
+        doShowLogin();
+    }
+
+    public static void showLoginScreen() {
+        if (instance != null) {
+            javafx.application.Platform.runLater(() -> instance.doShowLogin());
+        }
+    }
+
+    private void doShowLogin() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
             loader.setControllerFactory(injector::getInstance);
@@ -111,8 +123,13 @@ public class MainApp extends Application {
             primaryStage.centerOnScreen();
             primaryStage.show();
 
+            shell.setupCloseHandler(primaryStage);
+
             ViewManager.init(stackRoot);
             shell.showInitialTab("home");
+
+            // restoreTheme after EventBus subscriptions are set up (in showInitialTab->initNavigation->subscribeEvents)
+            themeService.restoreTheme();
 
         } catch (Exception e) {
             ExceptionHandler.handle(e, "Failed to show main shell");

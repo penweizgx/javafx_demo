@@ -1,63 +1,63 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+本文件为 Claude Code (claude.ai/code) 在本仓库中工作时提供指导。
 
-## Build & Run Commands
+## 构建与运行命令
 
 ```bash
-mvn compile          # Compile (run before committing to verify no errors)
-mvn test             # Run all tests (JUnit 5 + Mockito)
-mvn javafx:run       # Run the application
-mvn clean package    # Build JAR
+mvn compile          # 编译（提交前运行以验证无错误）
+mvn test             # 运行所有测试（JUnit 5 + Mockito）
+mvn javafx:run       # 运行应用
+mvn clean package    # 构建 JAR
 ```
 
-Run a single test class: `mvn test -Dtest=LoginViewModelTest`
-Run a single test method: `mvn test -Dtest=LoginViewModelTest#testLoginSuccess`
+运行单个测试类：`mvn test -Dtest=LoginViewModelTest`
+运行单个测试方法：`mvn test -Dtest=LoginViewModelTest#testLoginSuccess`
 
-## Architecture
+## 架构
 
-**Pattern:** MVVM with Google Guice 7.0 dependency injection.
+**模式：** MVVM + Google Guice 7.0 依赖注入。
 
-**Entry point:** `MainApp.java` — creates Guice Injector from `AppModule`, initializes `AppContext` (singleton Injector wrapper), then shows login screen. After login, `showMainShell()` loads shell.fxml and wires up Router, services, and ViewManager.
+**入口：** `MainApp.java` — 从 `AppModule` 创建 Guice Injector，初始化 `AppContext`（单例 Injector 包装器），然后显示登录界面。登录成功后，`showMainShell()` 加载 shell.fxml 并连接 Router、各服务和 ViewManager。
 
-**DI flow:**
-- `AppModule` binds all services (ApiService→OkHttpApiServiceImpl, AuthService, UserService, UserManageService→MockUserManageService, TokenStorage, I18nService, RouteRegistry)
-- `AppContext.get().getService(Class)` provides global service access
-- `ViewManager` uses `FXMLLoader.setControllerFactory(injector::getInstance)` so FXML controllers are Guice-managed
-- Controllers receive ViewModels via manual `setViewModel()` calls (not Guice injection)
+**依赖注入流程：**
+- `AppModule` 绑定所有服务（ApiService→OkHttpApiServiceImpl、AuthService、UserService、UserManageService→MockUserManageService、TokenStorage、I18nService、RouteRegistry）
+- `AppContext.get().getService(Class)` 提供全局服务访问
+- `ViewManager` 使用 `FXMLLoader.setControllerFactory(injector::getInstance)` 使 FXML 控制器由 Guice 管理
+- 控制器通过手动 `setViewModel()` 调用接收 ViewModel（非 Guice 注入）
 
-**Navigation/Routing system:**
-- `Router` — SPA-like router with TabPane display, route pattern matching (`:param` variables like `/system/user/detail/:id`), browser-like history (back/forward), and navigation guards
-- `RouteRegistry` — pattern→regex matching with param extraction
-- `NavigationConfig` — loaded from `navigation.yaml` (SnakeYAML), rendered as TreeView in `NavigationPane`
-- `AuthGuard` — redirects to `/login` if not authenticated (public routes: `/login`, `/home`)
-- `EventBus` — singleton pub/sub for `RouteChangeEvent` and `NavigationClickEvent`
-- Controllers receiving route params implement `Router.ParamReceiver`
+**导航/路由系统：**
+- `Router` — 类 SPA 路由器，基于 TabPane 显示，支持路由模式匹配（`:param` 变量如 `/system/user/detail/:id`）、浏览器式历史记录（前进/后退）和导航守卫
+- `RouteRegistry` — 模式→正则匹配，支持参数提取
+- `NavigationConfig` — 从 `navigation.yaml` 加载（SnakeYAML），在 `NavigationPane` 中渲染为 TreeView
+- `AuthGuard` — 未认证时重定向到 `/login`（公开路由：`/login`、`/home`）
+- `EventBus` — 单例发布/订阅，用于 `RouteChangeEvent` 和 `NavigationClickEvent`
+- 接收路由参数的控制器实现 `Router.ParamReceiver`
 
-**Async execution:**
-- `AsyncExecutor` — fixed thread pool (CPU core count), all `CompletableFuture` tasks go through here
-- `ViewModelBase.executeAsync()` — wraps async work with `Platform.runLater` for UI thread safety
+**异步执行：**
+- `AsyncExecutor` — 固定线程池（CPU 核心数），所有 `CompletableFuture` 任务通过此处执行
+- `ViewModelBase.executeAsync()` — 包装异步工作，通过 `Platform.runLater` 保证 UI 线程安全
 
-**API layer:**
-- `ApiService` interface → `OkHttpApiServiceImpl` (RSA password encryption, token management, retry with exponential backoff)
-- `RequestExecutor` strategy pattern: `SimpleGetRequestExecutor`, `FormPostRequestExecutor`, `JsonPostRequestExecutor`, `FileUploadRequestExecutor`
-- `InMemoryConfigStorage` holds tokens/keys/proxy; `HostConfig` defaults to `https://doixiao.cn/api`
+**API 层：**
+- `ApiService` 接口 → `OkHttpApiServiceImpl`（RSA 密码加密、令牌管理、指数退避重试）
+- `RequestExecutor` 策略模式：`SimpleGetRequestExecutor`、`FormPostRequestExecutor`、`JsonPostRequestExecutor`、`FileUploadRequestExecutor`
+- `InMemoryConfigStorage` 存储令牌/密钥/代理；`HostConfig` 默认为 `https://doixiao.cn/api`
 
-## Key Conventions
+## 关键约定
 
-- **Lombok required** — annotation processing must be enabled; models use `@Data`
-- **FXML path convention**: `/fxml/{pageId}.fxml`, loaded via `ViewManager.load(pageId)`
-- **UI framework**: AtlantaFX (`atlantafx-base`) — use its style classes (`Styles.ACCENT`, `Styles.DANGER`, `Styles.BUTTON_OUTLINED`, etc.) and controls (`Card`, `ModalPane`) over raw JavaFX equivalents
-- **Theme**: `ThemeService` switches light.css/dark.css; AtlantaFX `PrimerLight` as base user agent stylesheet
-- **i18n**: All UI text via `I18nService.getString(key)` — resource bundles `messages_zh_CN.properties` and `messages_en_US.properties`
-- **Navigation YAML**: `showInNav` controls nav bar visibility; all nodes register in routing regardless. Sub-tabs within pages set `showInNav: false`
-- **Git**: Commit after each code change; always `mvn compile` before committing
-- **Token storage**: `java.util.prefs.Preferences` (not file-based)
+- **Lombok 必需** — 必须启用注解处理；模型使用 `@Data`
+- **FXML 路径约定**：`/fxml/{pageId}.fxml`，通过 `ViewManager.load(pageId)` 加载
+- **UI 框架**：AtlantaFX（`atlantafx-base`）— 优先使用其样式类（`Styles.ACCENT`、`Styles.DANGER`、`Styles.BUTTON_OUTLINED` 等）和控件（`Card`、`ModalPane`），而非原生 JavaFX 等价物。AtlantaFX 源码位于 `/Users/penwei/Downloads/atlantafx-2.0.1`，使用不明确时可查阅参考
+- **主题**：`ThemeService` 切换 light.css/dark.css；AtlantaFX `PrimerLight` 作为基础用户代理样式表
+- **国际化**：所有 UI 文本通过 `I18nService.getString(key)` 获取 — 资源包为 `messages_zh_CN.properties` 和 `messages_en_US.properties`
+- **导航 YAML**：`showInNav` 控制导航栏可见性；所有节点无论是否显示都注册到路由。页面内子标签页设置 `showInNav: false`
+- **Git**：每次代码变更后提交；提交前务必运行 `mvn compile`
+- **令牌存储**：使用 `java.util.prefs.Preferences`（非文件方式）
 
-## Test Account
+## 测试账号
 
-- Phone: `15828245173`, Password: `351688` — for login/API testing
+- 手机号：`15828245173`，密码：`351688` — 用于登录/API 测试
 
-## Potential Dependency Gaps
+## 潜在依赖缺失
 
-SnakeYAML (used by `NavigationConfigLoader`) and Ikonli/Material2 icons (used by nav components) are not explicitly declared in pom.xml — they may be transitive from AtlantaFX but could cause runtime issues if that dependency changes.
+SnakeYAML（`NavigationConfigLoader` 使用）和 Ikonli/Material2 图标（导航组件使用）未在 pom.xml 中显式声明 — 它们可能是 AtlantaFX 的传递依赖，但如果该依赖变更可能导致运行时问题。

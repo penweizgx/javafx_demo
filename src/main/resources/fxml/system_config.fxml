@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Separator?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.app.controller.SystemConfigController"
+      spacing="16" styleClass="system-config-page"
+      style="-fx-padding: 24;">
+
+    <Label fx:id="titleLabel" styleClass="text-bold"/>
+
+    <Separator/>
+
+    <HBox spacing="16" alignment="CENTER_LEFT">
+        <Label fx:id="languageLabel" styleClass="text-body"/>
+        <ComboBox fx:id="languageComboBox" prefWidth="200"/>
+    </HBox>
+
+    <HBox spacing="16" alignment="CENTER_LEFT">
+        <Label fx:id="themeLabel" styleClass="text-body"/>
+        <ComboBox fx:id="themeComboBox" prefWidth="200"/>
+    </HBox>
+
+</VBox>

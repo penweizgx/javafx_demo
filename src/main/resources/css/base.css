@@ -1,15 +1,11 @@
-.root {
-    -fx-font-family: "Segoe UI", "Microsoft YaHei";
-    -fx-font-size: 13;
-}
-
-/* common */
-.app-shell { -fx-background-color: #BF000000; }
-
-/* header */
+/* === Header === */
 .header-bar {
     -fx-padding: 12 16;
-    -fx-spacing: 0;
+    -fx-alignment: center-left;
+    -fx-spacing: 16;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: -color-bg-default;
 }
 
 .brand-area {
@@ -17,192 +13,41 @@
     -fx-spacing: 8;
 }
 
-.brand-title {
-    -fx-font-size: 16;
-    -fx-font-weight: bold;
-}
-
 .system-area {
     -fx-alignment: center-right;
     -fx-spacing: 8;
 }
 
-/* aside navigation */
-.aside-nav {
-    -fx-padding: 16 8;
-    -fx-spacing: 4;
-}
-
-.nav-group {
-    -fx-spacing: 0;
-}
-
-.nav-group-header {
-    -fx-pref-height: 40;
-    -fx-padding: 10 16;
+/* === User Menu === */
+.user-menu-button {
     -fx-background-radius: 6;
-    -fx-cursor: hand;
-    -fx-spacing: 8;
-    -fx-alignment: center-left;
+    -fx-padding: 4 8 4 8;
+}
+.user-menu-button:hover {
+    -fx-background-color: -color-bg-subtle;
+}
+.avatar-icon {
+    -fx-icon-color: -color-fg-muted;
 }
 
-.nav-group-header.level-1 {
-    -fx-padding: 10 16;
-}
-
-.nav-group-header.level-2 {
-    -fx-padding: 10 24;
-}
-
-.nav-group-header.level-3 {
-    -fx-padding: 10 32;
-}
-
-.nav-group-header:hover {
-    -fx-background-color: rgba(0, 0, 0, 0.05);
-}
-
-.nav-group-label {
-    -fx-font-size: 13;
-}
-
-.nav-group-content {
-    -fx-spacing: 2;
-}
-
-.nav-item {
-    -fx-pref-height: 36;
-    -fx-background-radius: 6;
-    -fx-cursor: hand;
-    -fx-spacing: 8;
-    -fx-alignment: center-left;
-}
-
-.nav-item.level-1 {
-    -fx-padding: 8 16;
-}
-
-.nav-item.level-2 {
-    -fx-padding: 8 24;
-}
-
-.nav-item.level-3 {
-    -fx-padding: 8 32;
-}
-
-.nav-item:hover {
-    -fx-background-color: rgba(0, 0, 0, 0.05);
-}
-
-.nav-item.selected {
-    -fx-background-color: rgba(59, 130, 246, 0.15);
-    -fx-font-weight: bold;
-}
-
-.nav-item-label {
-    -fx-font-size: 13;
-}
-
-.nav-expand-icon {
-    -fx-text-fill: #666;
-}
-
-.nav-icon {
-    -fx-fit-width: 16;
-    -fx-fit-height: 16;
-}
-
-.nav-sub-item {
-    -fx-pref-height: 32;
-    -fx-padding: 6 48;
-    -fx-background-radius: 4;
-    -fx-cursor: hand;
-}
-
-.nav-sub-item:hover {
-    -fx-background-color: rgba(0, 0, 0, 0.05);
-}
-
-.nav-sub-item.selected {
-    -fx-background-color: rgba(59, 130, 246, 0.1);
-    -fx-font-weight: bold;
-}
-
-.aside-nav .nav-item.menu-selected {
-    -fx-background-color: rgba(59, 130, 246, 0.15);
-    -fx-font-weight: bold;
-}
-
-/* content area */
-.content-area {
-    -fx-padding: 0;
-}
-
-/* footer */
+/* === Footer === */
 .footer-bar {
-    -fx-padding: 8 16;
-    -fx-alignment: center-left;
-}
-
-/* legacy - keep for compatibility */
-.top-bar {
-    -fx-padding: 10;
-    -fx-spacing: 6;
-    -fx-alignment: center-left;
-}
-
-.top-bar Button.menu-selected {
-    -fx-background-color: rgba(255, 255, 255, 0.25);
-    -fx-font-weight: bold;
-    -fx-padding: 6 12;
-}
-
-.page-root {
-    -fx-padding: 20;
-}
-
-/* form item */
-.form-item {
-    -fx-padding: 6;
-    -fx-alignment: center-left;
-}
-
-.form-error {
-    -fx-text-fill: #d32f2f;
-    -fx-font-size: 11;
-}
-
-.text-field.err {
-    -fx-border-color: #d32f2f;
-    -fx-border-width: 1;
-}
-
-/* modal & mask */
-.modal-mask { -fx-fill: #40000000; }
-
-.modal-container {
+    -fx-padding: 6 16;
     -fx-alignment: center;
-    -fx-padding: 24;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1 0 0 0;
+    -fx-background-color: -color-bg-default;
 }
 
-/* loading overlay */
-.loading-overlay .modal-mask { -fx-fill: #33000000; }
-
-.loading-overlay {
-    -fx-alignment: center;
+/* === Navigation === */
+.nav-container {
+    -fx-pref-width: 220;
+    -fx-background-color: -color-bg-default;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 0 1 0 0;
 }
 
-/* toast */
-.toast {
-    -fx-background-color: #BF000000;
-    -fx-text-fill: white;
-    -fx-padding: 8 12;
-    -fx-background-radius: 6;
-    -fx-effect: dropshadow( gaussian , #40000000 , 6,0,0,2 );
-}
-
-.toast-layer {
-    -fx-pref-width: 100%;
-    -fx-pref-height: 100%;
-    -fx-padding: 12;
+/* === Content Area === */
+.content-area {
+    -fx-background-color: -color-bg-subtle;
 }

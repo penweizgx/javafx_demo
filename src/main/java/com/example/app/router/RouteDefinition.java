@@ -11,15 +11,21 @@ public class RouteDefinition {
     private final String pattern;
     private final String fxmlPath;
     private final String label;
+    private final String icon;
     private final Pattern regexPattern;
     private final java.util.List<String> paramNames;
 
-    public RouteDefinition(String pattern, String fxmlPath, String label) {
+    public RouteDefinition(String pattern, String fxmlPath, String label, String icon) {
         this.pattern = pattern;
         this.fxmlPath = fxmlPath;
         this.label = label;
+        this.icon = icon;
         this.paramNames = new java.util.ArrayList<>();
         this.regexPattern = compilePattern(pattern);
+    }
+
+    public RouteDefinition(String pattern, String fxmlPath, String label) {
+        this(pattern, fxmlPath, label, null);
     }
 
     private Pattern compilePattern(String pattern) {

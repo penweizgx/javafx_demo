@@ -2,6 +2,9 @@ package com.example.app.navigation;
 
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
+import com.example.app.AppContext;
+import com.example.app.i18n.I18nService;
+import com.example.app.i18n.LocaleChangeEvent;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.TreeCell;
@@ -12,6 +15,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class NavigationPane extends VBox {
 
@@ -19,6 +23,7 @@ public class NavigationPane extends VBox {
     private final TreeView<NavigationNode> treeView;
     private final StringProperty selectedPath = new SimpleStringProperty();
     private final Map<String, TreeItem<NavigationNode>> itemByPath = new HashMap<>();
+    private final Consumer<LocaleChangeEvent> localeHandler = e -> refreshLabels();
 
     public NavigationPane(NavigationConfig config) {
         this.config = config;
@@ -76,6 +81,7 @@ public class NavigationPane extends VBox {
 
     private void subscribeEvents() {
         EventBus.getInstance().subscribe(RouteChangeEvent.class, event -> {
+            if (event.getType() == RouteChangeEvent.Type.TAB_CLOSE) return;
             String path = event.getPath();
             if (path != null) {
                 selectByPath(path);
@@ -90,13 +96,18 @@ public class NavigationPane extends VBox {
             }
         });
 
+        EventBus.getInstance().subscribe(LocaleChangeEvent.class, localeHandler);
+
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
             if (selected != null && selected.getValue() != null) {
                 NavigationNode node = selected.getValue();
                 if (node.hasPath()) {
-                    RouteParams params = new RouteParams();
-                    EventBus.getInstance().publish(
-                            new NavigationClickEvent(node, node.getPath(), params));
+                    String path = node.getPath();
+                    if (!path.equals(selectedPath.get())) {
+                        RouteParams params = new RouteParams();
+                        EventBus.getInstance().publish(
+                                new NavigationClickEvent(node, path, params));
+                    }
                 }
             }
         });
@@ -134,6 +145,35 @@ public class NavigationPane extends VBox {
 
     public NavigationConfig getConfig() {
         return config;
+    }
+
+    private void refreshLabels() {
+        I18nService i18n;
+        try {
+            i18n = AppContext.get().getService(I18nService.class);
+        } catch (Exception e) {
+            return;
+        }
+        for (NavigationNode root : config.getRoots()) {
+            updateNodeLabel(root, i18n);
+        }
+        treeView.refresh();
+    }
+
+    private void updateNodeLabel(NavigationNode node, I18nService i18n) {
+        if (node.getLabelKey() != null && !node.getLabelKey().isEmpty()) {
+            try {
+                node.setLabel(i18n.getString(node.getLabelKey()));
+            } catch (Exception ignored) {
+            }
+        }
+        for (NavigationNode child : node.getChildren()) {
+            updateNodeLabel(child, i18n);
+        }
+    }
+
+    public void cleanup() {
+        EventBus.getInstance().unsubscribe(LocaleChangeEvent.class, localeHandler);
     }
 
     private static class NavTreeCell extends TreeCell<NavigationNode> {

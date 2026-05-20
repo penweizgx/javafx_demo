@@ -22,4 +22,8 @@ public class RouteMatch {
     public String getLabel() {
         return definition.getLabel();
     }
+
+    public String getIcon() {
+        return definition.getIcon();
+    }
 }
