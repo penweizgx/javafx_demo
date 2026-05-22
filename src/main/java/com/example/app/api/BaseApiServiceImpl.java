@@ -7,10 +7,13 @@ import com.example.app.api.storage.ConfigStorage;
 import com.example.app.api.storage.InMemoryConfigStorage;
 import com.example.app.model.User;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 @Slf4j
@@ -91,15 +94,40 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
     }
 
     protected JsonObject extractResBody(String responseContent) throws ApiException {
+        JsonObject jsonObject = parseEnvelope(responseContent);
+        JsonElement resbody = jsonObject.get("resbody");
+        if (resbody == null || resbody.isJsonNull()) {
+            return null;
+        }
+        return resbody.isJsonObject() ? resbody.getAsJsonObject() : null;
+    }
+
+    protected <T> T extractResBodyAs(String responseContent, Class<T> beanClass) throws ApiException {
+        JsonObject jsonObject = parseEnvelope(responseContent);
+        JsonElement resbody = jsonObject.get("resbody");
+        if (resbody == null || resbody.isJsonNull()) {
+            throw new ApiException("响应数据为空");
+        }
+        return new Gson().fromJson(resbody, beanClass);
+    }
+
+    protected <T> T extractResBodyAs(String responseContent, Type targetType) throws ApiException {
+        JsonObject jsonObject = parseEnvelope(responseContent);
+        JsonElement resbody = jsonObject.get("resbody");
+        if (resbody == null || resbody.isJsonNull()) {
+            throw new ApiException("响应数据为空");
+        }
+        return new Gson().fromJson(resbody, targetType);
+    }
+
+    private JsonObject parseEnvelope(String responseContent) throws ApiException {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(responseContent, JsonObject.class);
         if (jsonObject.has("code") && jsonObject.get("code").getAsInt() != 200) {
-            throw new ApiException(jsonObject.get("message").getAsString(), jsonObject.get("code").getAsInt());
+            String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "未知错误";
+            throw new ApiException(message, jsonObject.get("code").getAsInt());
         }
-        if (jsonObject.has("resbody")) {
-            return jsonObject.getAsJsonObject("resbody");
-        }
-        return null;
+        return jsonObject;
     }
 
     @Override

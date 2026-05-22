@@ -1,19 +1,16 @@
 package com.example.app.api.okhttp;
 
 import com.example.app.api.*;
-import com.example.app.utils.RSAUtils;
 import com.google.inject.Inject;
-
 import okhttp3.logging.HttpLoggingInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @Slf4j
 public class OkHttpApiServiceImpl extends BaseApiServiceImpl<OkHttpClient, OkHttpProxyInfo> {
-    private OkHttpClient httpClient;
+    protected OkHttpClient httpClient;
     private OkHttpProxyInfo httpProxy;
 
     @Inject
@@ -32,7 +29,7 @@ public class OkHttpApiServiceImpl extends BaseApiServiceImpl<OkHttpClient, OkHtt
 
     @Override
     public void initHttp() {
-        log.debug("WxChannelServiceOkHttpImpl initHttp");
+        log.debug("OkHttpApiServiceImpl initHttp");
 
         this.configStorage = getWxMpConfigStorage();
         // 设置代理
@@ -86,44 +83,5 @@ public class OkHttpApiServiceImpl extends BaseApiServiceImpl<OkHttpClient, OkHtt
             httpClient = clientBuilder.build();
         }
     }
-
-    @Override
-    public void login(String username, String password) throws ApiException {
-        initRSAKey();
-        String modulus = configStorage.getRSAModulus();
-        String exponent = configStorage.getRSAExponent();
-
-        if (modulus == null || exponent == null) {
-            throw new ApiException("RSA Key not initialized");
-        }
-
-        String encryptedPassword = RSAUtils.encrypt(password, modulus, exponent);
-
-        RequestBody body = new FormBody.Builder()
-                .add("username", username)
-                .add("password", encryptedPassword)
-                .build();
-        Request request = new Request.Builder()
-                .url(ApiUrl.Authenticate.LOGIN_WITH_PASSWORD.getUrl(configStorage))
-                .post(body)
-                .build();
-
-        try (Response response = httpClient.newCall(request).execute()) {
-            String responseBody = Objects.requireNonNull(response.body()).string();
-            // Check response code from body wrapper
-            extractResBody(responseBody);
-
-            // Extract token from header
-            String token = response.header("x-auth-token");
-            if (token != null && !token.isEmpty()) {
-                configStorage.updateAccessToken(token, 7200); // Default 2 hours
-            } else {
-                throw new ApiException("Login successful but x-auth-token missing");
-            }
-        } catch (IOException e) {
-            throw new ApiException("Login failed", e);
-        }
-    }
-
 
 }

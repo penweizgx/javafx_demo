@@ -22,14 +22,6 @@ public interface ApiService {
      */
     void initHttp();
 
-    /**
-     * User login.
-     * 
-     * @param username username
-     * @param password password
-     */
-    void login(String username, String password);
-
     Object getRSAKeyRequest();
 
     User getCurrentUser();

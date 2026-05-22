@@ -1,6 +1,8 @@
 package com.example.app.config;
 
 import com.example.app.api.ApiService;
+import com.example.app.api.okhttp.AuthApiServiceImpl;
+import com.example.app.api.okhttp.EmployeeApiServiceImpl;
 import com.example.app.api.okhttp.OkHttpApiServiceImpl;
 import com.example.app.guard.AuditLogGuard;
 import com.example.app.guard.AuthGuard;
@@ -31,6 +33,8 @@ public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ApiService.class).to(OkHttpApiServiceImpl.class).in(Singleton.class);
+        bind(AuthApiServiceImpl.class).in(Singleton.class);
+        bind(EmployeeApiServiceImpl.class).in(Singleton.class);
         bind(AuthService.class).to(AuthServiceImpl.class).in(Singleton.class);
         bind(UserService.class).to(UserServiceImpl.class).in(Singleton.class);
         bind(UserManageService.class).to(MockUserManageService.class).in(Singleton.class);
