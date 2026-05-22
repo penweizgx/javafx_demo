@@ -3,6 +3,7 @@ package com.example.app.api.okhttp;
 import com.example.app.api.ApiException;
 import com.example.app.api.ApiUrl;
 import com.example.app.utils.RSAUtils;
+import com.google.inject.Inject;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -13,6 +14,14 @@ import java.util.Objects;
  * 无法通过父类通用方法完成，因此直接使用httpClient构建OkHttp Request。
  */
 public class AuthApiServiceImpl extends OkHttpApiServiceImpl {
+
+    @Inject
+    public AuthApiServiceImpl() {
+        // Guice创建子类实例时会先调用父类无参构造器
+        // 父类OkHttpApiServiceImpl的无参构造器不会调用initHttp()
+        // 需要手动调用initHttp()来初始化configStorage和httpClient
+        initHttp();
+    }
 
     public void login(String username, String password) throws ApiException {
         initRSAKey();
