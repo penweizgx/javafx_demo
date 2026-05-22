@@ -27,6 +27,11 @@ public class EmployeeApiServiceImpl extends OkHttpApiServiceImpl {
 
     private final Gson gson = new Gson();
 
+    @Inject
+    public EmployeeApiServiceImpl() {
+        initHttp();
+    }
+
     public PageResult<Employee> listEmployees(EmployeeListReq req) throws ApiException {
         Map<String, Object> queryParams = new HashMap<>();
         if (req.getName() != null && !req.getName().isEmpty()) {
