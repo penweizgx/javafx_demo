@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '/getStatusText|getStatusStyle|getStatusColor/,/^[[:space:]]*\\\\}/' /Users/penwei/IdeaProjects/javafx_demo/src/main/java/com/example/app/component/EmployeeDetailModal.java)",
+      "Bash(./mvnw compile *)",
+      "Bash(mvn compile *)",
+      "Bash(/opt/apache-maven-3.9.3/bin/mvn compile *)",
+      "Bash(/opt/apache-maven-3.9.3/bin/mvn javafx:run)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(openspec new *)",
+      "Bash(openspec status *)",
+      "Bash(openspec instructions *)",
+      "Bash(openspec list *)",
+      "WebFetch(domain:kordamp.org)",
+      "WebSearch",
+      "Bash(curl -s 'https://kordamp.org/ikonli/cheat-sheet-material2.html')",
+      "Bash(/opt/apache-maven-3.9.3/bin/mvn clean *)",
+      "Bash(python3 *)"
+    ]
+  }
+}
