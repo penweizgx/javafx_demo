@@ -29,16 +29,16 @@ navigation:
         options:
           cacheable: true
           closable: true
-      - id: user-mgmt
-        label: 用户管理
-        labelKey: nav.user.mgmt
+      - id: employee-mgmt
+        label: 员工管理
+        labelKey: nav.employee.mgmt
         children:
-          # 用户列表 - 功能页面，在导航栏显示
-          - id: user-list
-            label: 用户列表
-            labelKey: nav.user.list
-            path: /system/user/list
-            fxml: /fxml/user_list.fxml
+          # 员工列表 - 功能页面，在导航栏显示
+          - id: employee-list
+            label: 员工列表
+            labelKey: nav.employee.list
+            path: /system/employee/list
+            fxml: /fxml/employee_list.fxml
             icon: user-list
             options:
               cacheable: true

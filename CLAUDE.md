@@ -53,7 +53,7 @@ mvn clean package    # 构建 JAR
 - **导航 YAML**：`showInNav` 控制导航栏可见性；所有节点无论是否显示都注册到路由。页面内子标签页设置 `showInNav: false`
 - **Git**：每次代码变更后提交；提交前务必运行 `mvn compile`
 - **令牌存储**：使用 `java.util.prefs.Preferences`（非文件方式）
-
+- **api接口文档**：api-docs.json
 ## 测试账号
 
 - 手机号：`15828245173`，密码：`351688` — 用于登录/API 测试

@@ -61,4 +61,14 @@ public interface ApiUrl {
     private final String path;
   }
 
+  @AllArgsConstructor
+  @Getter
+  enum Employee implements ApiUrl {
+    LIST(API_DEFAULT_HOST_URL, "/employee/list"),
+    ;
+
+    private final String prefix;
+    private final String path;
+  }
+
 }
