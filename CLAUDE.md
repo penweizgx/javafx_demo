@@ -54,6 +54,13 @@ mvn clean package    # 构建 JAR
 - **Git**：每次代码变更后提交；提交前务必运行 `mvn compile`
 - **令牌存储**：使用 `java.util.prefs.Preferences`（非文件方式）
 - **api接口文档**：api-docs.json
+- **API Service 架构规范**：
+  - 所有业务 API 调用必须通过业务模块的 ApiServiceImpl 实现（如 `AuthApiServiceImpl`、`EmployeeApiServiceImpl`）
+  - ApiServiceImpl 必须继承 `OkHttpApiServiceImpl`，复用其 HTTP 基础设施
+  - 使用 `ApiUrl` 枚举统一管理 API 端点，禁止硬编码 URL
+  - 使用 `extractResBodyAs()` 泛型方法统一处理 resbody 提取和 JSON → Bean 转换
+  - `ConfigStorage` 必须是 Singleton，确保 token 在登录后正确保留
+  - ApiServiceImpl 构造器中必须调用 `initHttp()` 初始化配置
 ## 测试账号
 
 - 手机号：`15828245173`，密码：`351688` — 用于登录/API 测试
