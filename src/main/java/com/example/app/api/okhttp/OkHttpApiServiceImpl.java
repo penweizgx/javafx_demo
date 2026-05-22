@@ -1,6 +1,7 @@
 package com.example.app.api.okhttp;
 
 import com.example.app.api.*;
+import com.example.app.api.storage.InMemoryConfigStorage;
 import com.google.inject.Inject;
 import okhttp3.logging.HttpLoggingInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,10 @@ public class OkHttpApiServiceImpl extends BaseApiServiceImpl<OkHttpClient, OkHtt
     public void initHttp() {
         log.debug("OkHttpApiServiceImpl initHttp");
 
-        this.configStorage = getWxMpConfigStorage();
+        // configStorage 已通过 Guice 注入，无需重新创建
+        if (configStorage == null) {
+            configStorage = new InMemoryConfigStorage();
+        }
         // 设置代理
         if (configStorage.getHttpProxyHost() != null && configStorage.getHttpProxyPort() > 0) {
             httpProxy = OkHttpProxyInfo.httpProxy(configStorage.getHttpProxyHost(),

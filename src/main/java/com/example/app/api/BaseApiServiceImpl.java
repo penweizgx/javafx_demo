@@ -4,12 +4,12 @@ import com.example.app.api.okhttp.executor.FormPostRequestExecutor;
 import com.example.app.api.okhttp.executor.SimpleGetRequestExecutor;
 import com.example.app.api.okhttp.executor.JsonPostRequestExecutor;
 import com.example.app.api.storage.ConfigStorage;
-import com.example.app.api.storage.InMemoryConfigStorage;
 import com.example.app.model.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -21,6 +21,11 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
     protected ConfigStorage configStorage;
     private static final int retrySleepMillis = 1000;
     private static final int maxRetryTimes = 5;
+
+    @Inject
+    public void setConfigStorage(ConfigStorage configStorage) {
+        this.configStorage = configStorage;
+    }
 
     @Override
     public Object get(String url) {
@@ -133,10 +138,6 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
     @Override
     public String getAccessToken() throws ApiException {
         return this.configStorage.getAccessToken();
-    }
-
-    protected ConfigStorage getWxMpConfigStorage() {
-        return new InMemoryConfigStorage();
     }
 
     @Override
