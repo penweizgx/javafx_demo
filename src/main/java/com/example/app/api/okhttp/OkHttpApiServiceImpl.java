@@ -2,6 +2,7 @@ package com.example.app.api.okhttp;
 
 import com.example.app.api.*;
 import com.example.app.api.storage.InMemoryConfigStorage;
+import com.example.app.service.ApiMonitorService;
 import com.google.inject.Inject;
 import okhttp3.logging.HttpLoggingInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,9 @@ import java.io.IOException;
 public class OkHttpApiServiceImpl extends BaseApiServiceImpl<OkHttpClient, OkHttpProxyInfo> {
     protected OkHttpClient httpClient;
     private OkHttpProxyInfo httpProxy;
+
+    @Inject
+    private ApiMonitorService apiMonitorService;
 
     @Inject
     public OkHttpApiServiceImpl() {
@@ -60,6 +64,8 @@ public class OkHttpApiServiceImpl extends BaseApiServiceImpl<OkHttpClient, OkHtt
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             clientBuilder.addInterceptor(loggingInterceptor);
 
+            clientBuilder.addInterceptor(new ApiMonitorInterceptor(apiMonitorService));
+
             httpClient = clientBuilder.build();
         } else {
             OkHttpClient baseClient = DefaultOkHttpClientBuilder.get().build();
@@ -83,6 +89,8 @@ public class OkHttpApiServiceImpl extends BaseApiServiceImpl<OkHttpClient, OkHtt
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             clientBuilder.addInterceptor(loggingInterceptor);
+
+            clientBuilder.addInterceptor(new ApiMonitorInterceptor(apiMonitorService));
 
             httpClient = clientBuilder.build();
         }

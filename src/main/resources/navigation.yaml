@@ -91,6 +91,15 @@ navigation:
             labelKey: nav.role.list
             path: /system/role/list
             fxml: /fxml/role_list.fxml
+      - id: api-monitor
+        label: API监控
+        labelKey: nav.api.monitor
+        path: /system/api-monitor
+        fxml: /fxml/api_monitor.fxml
+        icon: activity
+        options:
+          cacheable: true
+          closable: true
 
   # 业务模块
   - id: business
