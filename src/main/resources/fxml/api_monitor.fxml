@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ScrollPane?>
 
 <VBox fx:id="root" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.app.controller.ApiMonitorController"
@@ -22,34 +22,43 @@
         <Button fx:id="clearBtn" text="清空" styleClass="danger"/>
     </HBox>
 
-    <TableView fx:id="logTable" VBox.vgrow="ALWAYS"/>
+    <HBox spacing="8" VBox.vgrow="ALWAYS">
+        <TableView fx:id="logTable" HBox.hgrow="ALWAYS"/>
 
-    <VBox fx:id="detailPanel" spacing="6" visible="false" managed="false">
-        <Separator/>
-        <HBox spacing="16" alignment="CENTER_LEFT">
-            <Label text="URL:" styleClass="bold"/>
-            <Label fx:id="detailUrlLabel"/>
-            <Label text="Method:" styleClass="bold"/>
-            <Label fx:id="detailMethodLabel"/>
-            <Label text="Status:" styleClass="bold"/>
-            <Label fx:id="detailStatusLabel"/>
-            <Label text="Duration:" styleClass="bold"/>
-            <Label fx:id="detailDurationLabel"/>
-            <Label text="Time:" styleClass="bold"/>
-            <Label fx:id="detailTimeLabel"/>
-        </HBox>
-        <HBox spacing="12" VBox.vgrow="ALWAYS">
-            <VBox spacing="4" HBox.hgrow="ALWAYS">
+        <VBox fx:id="detailPanel" spacing="6" prefWidth="380" minWidth="300" visible="false" managed="false">
+            <Separator orientation="VERTICAL" VBox.vgrow="ALWAYS"/>
+
+            <Label text="请求详情" styleClass="h5"/>
+            <Separator/>
+
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Method:" styleClass="bold"/>
+                <Label fx:id="detailMethodLabel"/>
+                <Label text="Status:" styleClass="bold"/>
+                <Label fx:id="detailStatusLabel"/>
+                <Label text="Duration:" styleClass="bold"/>
+                <Label fx:id="detailDurationLabel"/>
+            </HBox>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Time:" styleClass="bold"/>
+                <Label fx:id="detailTimeLabel"/>
+            </HBox>
+            <VBox spacing="4">
+                <Label text="URL" styleClass="bold"/>
+                <TextArea fx:id="detailUrlArea" wrapText="true" editable="false"
+                          prefRowCount="2" styleClass="rounded"/>
+            </VBox>
+            <VBox spacing="4" VBox.vgrow="ALWAYS">
                 <Label text="请求参数" styleClass="bold"/>
                 <TextArea fx:id="detailRequestArea" wrapText="true" editable="false"
-                          prefRowCount="5" VBox.vgrow="ALWAYS" styleClass="rounded"/>
+                          prefRowCount="6" VBox.vgrow="ALWAYS" styleClass="rounded"/>
             </VBox>
-            <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <VBox spacing="4" VBox.vgrow="ALWAYS">
                 <Label text="返回参数" styleClass="bold"/>
                 <TextArea fx:id="detailResponseArea" wrapText="true" editable="false"
-                          prefRowCount="5" VBox.vgrow="ALWAYS" styleClass="rounded"/>
+                          prefRowCount="6" VBox.vgrow="ALWAYS" styleClass="rounded"/>
             </VBox>
-        </HBox>
-    </VBox>
+        </VBox>
+    </HBox>
 
 </VBox>

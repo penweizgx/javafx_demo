@@ -10,11 +10,7 @@ import com.example.app.service.ApiMonitorService;
 import com.example.app.viewmodel.ApiMonitorViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.time.Instant;
@@ -47,7 +43,7 @@ public class ApiMonitorController {
     private VBox detailPanel;
 
     @FXML
-    private Label detailUrlLabel;
+    private TextArea detailUrlArea;
 
     @FXML
     private Label detailMethodLabel;
@@ -197,7 +193,7 @@ public class ApiMonitorController {
 
     private void showDetail(ApiRequestLog log) {
         if (log == null) {
-            detailUrlLabel.setText("");
+            detailUrlArea.setText("");
             detailMethodLabel.setText("");
             detailStatusLabel.setText("");
             detailDurationLabel.setText("");
@@ -206,7 +202,7 @@ public class ApiMonitorController {
             detailResponseArea.setText("");
             return;
         }
-        detailUrlLabel.setText(log.getUrl());
+        detailUrlArea.setText(log.getUrl());
         detailMethodLabel.setText(log.getMethod());
         detailStatusLabel.setText(String.valueOf(log.getStatusCode()));
         detailDurationLabel.setText(log.getDurationMs() + "ms");
