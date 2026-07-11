@@ -43,7 +43,7 @@ public class ApiMonitorController {
     private VBox detailPanel;
 
     @FXML
-    private TextArea detailUrlArea;
+    private Label detailUrlLabel;
 
     @FXML
     private Label detailMethodLabel;
@@ -193,7 +193,7 @@ public class ApiMonitorController {
 
     private void showDetail(ApiRequestLog log) {
         if (log == null) {
-            detailUrlArea.setText("");
+            detailUrlLabel.setText("");
             detailMethodLabel.setText("");
             detailStatusLabel.setText("");
             detailDurationLabel.setText("");
@@ -202,7 +202,7 @@ public class ApiMonitorController {
             detailResponseArea.setText("");
             return;
         }
-        detailUrlArea.setText(log.getUrl());
+        detailUrlLabel.setText(log.getUrl());
         detailMethodLabel.setText(log.getMethod());
         detailStatusLabel.setText(String.valueOf(log.getStatusCode()));
         detailDurationLabel.setText(log.getDurationMs() + "ms");

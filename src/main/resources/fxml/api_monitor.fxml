@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Button?>
@@ -9,6 +10,8 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.geometry.Insets?>
 
 <VBox fx:id="root" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.app.controller.ApiMonitorController"
@@ -26,28 +29,28 @@
         <TableView fx:id="logTable" HBox.hgrow="ALWAYS"/>
 
         <VBox fx:id="detailPanel" spacing="6" prefWidth="380" minWidth="300" visible="false" managed="false">
-            <Separator orientation="VERTICAL" VBox.vgrow="ALWAYS"/>
-
             <Label text="请求详情" styleClass="h5"/>
             <Separator/>
 
-            <HBox spacing="8" alignment="CENTER_LEFT">
-                <Label text="Method:" styleClass="bold"/>
-                <Label fx:id="detailMethodLabel"/>
-                <Label text="Status:" styleClass="bold"/>
-                <Label fx:id="detailStatusLabel"/>
-                <Label text="Duration:" styleClass="bold"/>
-                <Label fx:id="detailDurationLabel"/>
-            </HBox>
-            <HBox spacing="8" alignment="CENTER_LEFT">
-                <Label text="Time:" styleClass="bold"/>
-                <Label fx:id="detailTimeLabel"/>
-            </HBox>
-            <VBox spacing="4">
-                <Label text="URL" styleClass="bold"/>
-                <TextArea fx:id="detailUrlArea" wrapText="true" editable="false"
-                          prefRowCount="2" styleClass="rounded"/>
-            </VBox>
+            <GridPane hgap="8" vgap="6">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="70" prefWidth="70"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+                <Label text="Method" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="detailMethodLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Label text="Status" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="detailStatusLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="Duration" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label fx:id="detailDurationLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Label text="Time" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Label fx:id="detailTimeLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" wrapText="true"/>
+                <Label text="URL" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="4" valign="TOP"/>
+                <Label fx:id="detailUrlLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" wrapText="true"/>
+            </GridPane>
+
+            <Separator/>
+
             <VBox spacing="4" VBox.vgrow="ALWAYS">
                 <Label text="请求参数" styleClass="bold"/>
                 <TextArea fx:id="detailRequestArea" wrapText="true" editable="false"
