@@ -1,5 +1,6 @@
 package com.example.app.api.okhttp;
 
+import com.example.app.AppContext;
 import com.example.app.model.ApiRequestLog;
 import com.example.app.service.ApiMonitorService;
 import okhttp3.*;
@@ -16,11 +17,6 @@ import java.util.concurrent.TimeUnit;
 public class ApiMonitorInterceptor implements Interceptor {
 
     private static final int MAX_RESPONSE_LENGTH = 2000;
-    private final ApiMonitorService monitorService;
-
-    public ApiMonitorInterceptor(ApiMonitorService monitorService) {
-        this.monitorService = monitorService;
-    }
 
     @NotNull
     @Override
@@ -42,7 +38,7 @@ public class ApiMonitorInterceptor implements Interceptor {
             long durationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
             log.setDurationMs(durationMs);
             log.setError(e.getMessage());
-            monitorService.addLog(log);
+            addLog(log);
             throw e;
         }
 
@@ -67,8 +63,16 @@ public class ApiMonitorInterceptor implements Interceptor {
             log.setResponseSummary(bodyString);
         }
 
-        monitorService.addLog(log);
+        addLog(log);
         return response;
+    }
+
+    private void addLog(ApiRequestLog log) {
+        try {
+            ApiMonitorService monitorService = AppContext.get().getService(ApiMonitorService.class);
+            monitorService.addLog(log);
+        } catch (Exception ignored) {
+        }
     }
 
     private String readRequestBody(Request request) {

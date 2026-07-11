@@ -51,7 +51,7 @@ mvn clean package    # 构建 JAR
 - **主题**：`ThemeService` 切换 light.css/dark.css；AtlantaFX `PrimerLight` 作为基础用户代理样式表
 - **国际化**：所有 UI 文本通过 `I18nService.getString(key)` 获取 — 资源包为 `messages_zh_CN.properties` 和 `messages_en_US.properties`
 - **导航 YAML**：`showInNav` 控制导航栏可见性；所有节点无论是否显示都注册到路由。页面内子标签页设置 `showInNav: false`
-- **Git**：每次代码变更后提交；提交前务必运行 `mvn compile`
+- **Git**：每次代码变更后本地提交；提交前务必运行 `mvn compile`,执行归档后再push到远程仓库
 - **令牌存储**：使用 `java.util.prefs.Preferences`（非文件方式）
 - **api接口文档**：api-docs.json
 - **API Service 架构规范**：
@@ -61,9 +61,6 @@ mvn clean package    # 构建 JAR
   - 使用 `extractResBodyAs()` 泛型方法统一处理 resbody 提取和 JSON → Bean 转换
   - `ConfigStorage` 必须是 Singleton，确保 token 在登录后正确保留
   - ApiServiceImpl 构造器中必须调用 `initHttp()` 初始化配置
-## 测试账号
-
-- 手机号：`15828245173`，密码：`351688` — 用于登录/API 测试
 
 ## 潜在依赖缺失
 
