@@ -45,7 +45,7 @@
                 <Label fx:id="detailDurationLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 <Label text="Time" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                 <Label fx:id="detailTimeLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" wrapText="true"/>
-                <Label text="URL" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="4" valign="TOP"/>
+                <Label text="URL" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
                 <Label fx:id="detailUrlLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" wrapText="true"/>
             </GridPane>
 
