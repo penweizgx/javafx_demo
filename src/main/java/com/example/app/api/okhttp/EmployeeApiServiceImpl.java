@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,28 +43,40 @@ public class EmployeeApiServiceImpl extends OkHttpApiServiceImpl {
         }
 
         String url = ApiUrl.Employee.LIST.getUrl(configStorage);
-        String response = (String) this.get(url, queryParams);
+        String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
 
-        // 解析resbody为JsonArray，然后逐个映射为Employee
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) {
             throw new ApiException("员工列表响应数据为空");
         }
 
         JsonArray dataArray = resbody.getAsJsonArray();
-        ArrayList<Employee> employees = new ArrayList<>(dataArray.size());
+        ArrayList<Employee> allEmployees = new ArrayList<>(dataArray.size());
 
         for (JsonElement elem : dataArray) {
-            employees.add(mapEmployeeDTOtoEmployee(elem.getAsJsonObject()));
+            allEmployees.add(mapEmployeeDTOtoEmployee(elem.getAsJsonObject()));
+        }
+
+        long total = allEmployees.size();
+        int pageSize = req.getPageSize() != null ? req.getPageSize() : 10;
+        int pageNum = req.getPageNum() != null ? req.getPageNum() : 1;
+        int fromIndex = (pageNum - 1) * pageSize;
+        int toIndex = Math.min(fromIndex + pageSize, allEmployees.size());
+
+        List<Employee> pageRecords;
+        if (fromIndex >= allEmployees.size()) {
+            pageRecords = new ArrayList<>();
+        } else {
+            pageRecords = allEmployees.subList(fromIndex, toIndex);
         }
 
         PageResult<Employee> result = new PageResult<>();
-        result.setRecords(employees);
-        result.setTotal((long) employees.size());
-        result.setPageNum(req.getPageNum());
-        result.setPageSize(req.getPageSize());
+        result.setRecords(new ArrayList<>(pageRecords));
+        result.setTotal(total);
+        result.setPageNum(pageNum);
+        result.setPageSize(pageSize);
 
-        log.info("Loaded {} employees", employees.size());
+        log.info("Loaded {} employees (page {}/{}, total {})", pageRecords.size(), pageNum, (total + pageSize - 1) / pageSize, total);
         return result;
     }
 

@@ -6,6 +6,8 @@ import com.example.app.i18n.I18nService;
 import com.example.app.i18n.LocaleChangeEvent;
 import com.example.app.model.Employee;
 import com.example.app.navigation.EventBus;
+import com.example.app.navigation.NavigationClickEvent;
+import com.example.app.navigation.RouteParams;
 import com.example.app.service.EmployeeManageService;
 import com.example.app.viewmodel.EmployeeListViewModel;
 import javafx.beans.binding.Bindings;
@@ -136,6 +138,18 @@ public class EmployeeListController {
         });
 
         employeeTable.getColumns().addAll(nameCol, genderCol, phoneCol, emailCol, orgCol, hireDateCol, statusCol);
+
+        employeeTable.setRowFactory(tv -> {
+            TableRow<Employee> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Employee emp = row.getItem();
+                    RouteParams params = RouteParams.of("id", emp.getId()).put("employee", emp);
+                    EventBus.getInstance().publish(new NavigationClickEvent(null, "/system/employee/detail/" + emp.getId(), params));
+                }
+            });
+            return row;
+        });
     }
 
     private void bindViewModel() {

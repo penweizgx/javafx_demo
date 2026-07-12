@@ -43,6 +43,15 @@ navigation:
             options:
               cacheable: true
               closable: true
+          - id: employee-detail
+            label: 员工详情
+            labelKey: nav.employee.detail
+            path: /system/employee/detail/:id
+            fxml: /fxml/employee_detail.fxml
+            showInNav: false
+            options:
+              cacheable: false
+              closable: true
           # 用户详情 - 页面内部元素，不在导航栏显示
           # 通过用户列表点击进入，支持Tab切换
           - id: user-detail
