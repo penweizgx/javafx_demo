@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import atlantafx.base.controls.Card?>
+
+<VBox fx:id="root" fx:controller="com.example.app.controller.StudentDetailController"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      spacing="12" styleClass="page-container">
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Button fx:id="backBtn" text="← 返回"/>
+        <Label fx:id="titleLabel" text="学生详情" styleClass="page-title" HBox.hgrow="ALWAYS"/>
+        <Button fx:id="editBtn" text="编辑"/>
+        <Button fx:id="saveBtn" text="保存" visible="false" managed="false" styleClass="primary"/>
+        <Button fx:id="cancelBtn" text="取消" visible="false" managed="false"/>
+    </HBox>
+
+    <ProgressIndicator fx:id="loadingIndicator" visible="false" maxWidth="40" maxHeight="40"/>
+    <Label fx:id="errorLabel" styleClass="error-message" visible="false" managed="false"/>
+
+    <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true">
+        <VBox spacing="16" styleClass="page-container">
+            <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+
+            <!-- 基本信息区块 -->
+            <Card>
+                <VBox spacing="8" styleClass="card-body">
+                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                    <Label text="基本信息" styleClass="section-title"/>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="姓名:" prefWidth="80"/>
+                        <Label fx:id="nameValue"/>
+                        <TextField fx:id="nameInput" visible="false" managed="false"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="性别:" prefWidth="80"/>
+                        <Label fx:id="genderValue"/>
+                        <ComboBox fx:id="genderInput" visible="false" managed="false"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="生日:" prefWidth="80"/>
+                        <Label fx:id="birthdayValue"/>
+                        <DatePicker fx:id="birthdayInput" visible="false" managed="false"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="电话:" prefWidth="80"/>
+                        <Label fx:id="phoneValue"/>
+                        <TextField fx:id="phoneInput" visible="false" managed="false"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="地址:" prefWidth="80"/>
+                        <Label fx:id="addressValue"/>
+                        <TextField fx:id="addressInput" visible="false" managed="false"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="班级:" prefWidth="80"/>
+                        <Label fx:id="clazzValue"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="状态:" prefWidth="80"/>
+                        <Label fx:id="statusValue" styleClass="badge"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="联系人:" prefWidth="80"/>
+                        <Label fx:id="parentValue"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT" visible="false" managed="false">
+                        <Label text="联系人姓名:" prefWidth="80"/>
+                        <TextField fx:id="parentNameInput"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT" visible="false" managed="false">
+                        <Label text="联系人电话:" prefWidth="80"/>
+                        <TextField fx:id="parentPhoneInput"/>
+                    </HBox>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT" visible="false" managed="false">
+                        <Label text="联系人关系:" prefWidth="80"/>
+                        <ComboBox fx:id="parentRelationInput"/>
+                    </HBox>
+                </VBox>
+            </Card>
+
+            <!-- 考勤信息区块 -->
+            <Card>
+                <VBox spacing="8" styleClass="card-body">
+                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                    <Label text="考勤信息" styleClass="section-title"/>
+                    <HBox spacing="16">
+                        <VBox spacing="4">
+                            <Label text="本月出勤" styleClass="text-muted"/>
+                            <Label fx:id="attendDaysValue" styleClass="text-bold"/>
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label text="请假" styleClass="text-muted"/>
+                            <Label fx:id="leaveDaysValue" styleClass="text-bold"/>
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label text="缺席" styleClass="text-muted"/>
+                            <Label fx:id="absentDaysValue" styleClass="text-bold"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Card>
+
+            <!-- 财务信息区块 -->
+            <Card>
+                <VBox spacing="8" styleClass="card-body">
+                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                    <Label text="财务信息" styleClass="section-title"/>
+                    <HBox spacing="12">
+                        <Label text="账户余额:" prefWidth="80"/>
+                        <Label fx:id="balanceValue" styleClass="text-bold"/>
+                    </HBox>
+                </VBox>
+            </Card>
+
+            <!-- 班级变动历史区块 -->
+            <Card>
+                <VBox spacing="8" styleClass="card-body">
+                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                    <Label text="班级变动历史" styleClass="section-title"/>
+                    <Label fx:id="historyValue"/>
+                </VBox>
+            </Card>
+        </VBox>
+    </ScrollPane>
+</VBox>

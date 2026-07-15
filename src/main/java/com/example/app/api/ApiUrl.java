@@ -71,4 +71,51 @@ public interface ApiUrl {
     private final String path;
   }
 
+  @AllArgsConstructor
+  @Getter
+  enum Student implements ApiUrl {
+    LIST_WITH_CLAZZ(API_DEFAULT_HOST_URL, "/student/listWithClazz"),
+    LIST_BY_CONDITION(API_DEFAULT_HOST_URL, "/student/listByCondition"),
+    DETAIL(API_DEFAULT_HOST_URL, "/student/detail"),
+    CREATE(API_DEFAULT_HOST_URL, "/student/create"),
+    CHANGE(API_DEFAULT_HOST_URL, "/student/change"),
+    GROUP_CLAZZ_STUDENT(API_DEFAULT_HOST_URL, "/student/groupClazzStudent"),
+    ;
+
+    private final String prefix;
+    private final String path;
+  }
+
+  @AllArgsConstructor
+  @Getter
+  enum Org implements ApiUrl {
+    CLAZZ_LIST_WITH_COUNT(API_DEFAULT_HOST_URL, "/org/clazz/listWithCount"),
+    CLAZZ_LIST_ACTIVE(API_DEFAULT_HOST_URL, "/org/clazz/listActive"),
+    ;
+
+    private final String prefix;
+    private final String path;
+  }
+
+  @AllArgsConstructor
+  @Getter
+  enum Attend implements ApiUrl {
+    COUNT_CLAZZ_DAY(API_DEFAULT_HOST_URL, "/attend/countClazzDay"),
+    LIST_MONTH_ATTEND_STUDENT(API_DEFAULT_HOST_URL, "/attend/listMonthAttend"),
+    ;
+
+    private final String prefix;
+    private final String path;
+  }
+
+  @AllArgsConstructor
+  @Getter
+  enum Finance implements ApiUrl {
+    ACCOUNT(API_DEFAULT_HOST_URL, "/finance/account"),
+    ;
+
+    private final String prefix;
+    private final String path;
+  }
+
 }

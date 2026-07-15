@@ -104,6 +104,7 @@ public class MainApp extends Application {
             DialogService dialogService = new DialogService(stackRoot);
             LoadingService loadingService = new LoadingService(stackRoot);
             ToastService toastService = new ToastService(stackRoot);
+            AppContext.get().registerService(DialogService.class, dialogService);
 
             ShellController shell = loader.getController();
             shell.initServices(dialogService, loadingService, toastService);

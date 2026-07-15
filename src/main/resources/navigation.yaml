@@ -1,5 +1,4 @@
 navigation:
-  # 首页 - 全局导航项，始终显示
   - id: home
     label: 首页
     labelKey: nav.home
@@ -12,14 +11,12 @@ navigation:
       singleton: true
       closable: false
 
-  # 系统管理模块
   - id: system
     label: 系统
     labelKey: nav.system
     icon: settings
     expanded: true
     children:
-      # 系统配置 - 系统模块第一项
       - id: system-config
         label: 系统配置
         labelKey: nav.system.config
@@ -29,109 +26,112 @@ navigation:
         options:
           cacheable: true
           closable: true
-      - id: employee-mgmt
-        label: 员工管理
-        labelKey: nav.employee.mgmt
-        children:
-          # 员工列表 - 功能页面，在导航栏显示
-          - id: employee-list
-            label: 员工列表
-            labelKey: nav.employee.list
-            path: /system/employee/list
-            fxml: /fxml/employee_list.fxml
-            icon: user-list
-            options:
-              cacheable: true
-              closable: true
-          - id: employee-detail
-            label: 员工详情
-            labelKey: nav.employee.detail
-            path: /system/employee/detail/:id
-            fxml: /fxml/employee_detail.fxml
-            showInNav: false
-            options:
-              cacheable: false
-              closable: true
-          # 用户详情 - 页面内部元素，不在导航栏显示
-          # 通过用户列表点击进入，支持Tab切换
-          - id: user-detail
-            label: 用户详情
-            labelKey: nav.user.detail
-            path: /system/user/detail/:id
-            fxml: /fxml/user_detail.fxml
-            icon: user-detail
-            showInNav: false  # 不在导航栏显示
-            options:
-              cacheable: false
-              supportsSubPage: true
-            children:
-              # 页面内部Tab项，不在导航栏显示
-              - id: user-basic
-                label: 基本信息
-                labelKey: nav.user.basic
-                tabId: basic
-                showInNav: false  # Tab项不在导航栏显示
-              - id: user-history
-                label: 操作记录
-                labelKey: nav.user.history
-                tabId: history
-                showInNav: false  # Tab项不在导航栏显示
-              - id: user-permission
-                label: 权限设置
-                labelKey: nav.user.permission
-                tabId: permission
-                showInNav: false  # Tab项不在导航栏显示
-          # 新增用户 - 页面内操作，不在导航栏显示
-          - id: user-create
-            label: 新增用户
-            labelKey: nav.user.create
-            path: /system/user/create
-            fxml: /fxml/user_form.fxml
-            showInNav: false  # 页面内操作元素
-            options:
-              singleton: true
-              confirmLeave: true
-      - id: role-mgmt
-        label: 角色管理
-        labelKey: nav.role.mgmt
-        children:
-          - id: role-list
-            label: 角色列表
-            labelKey: nav.role.list
-            path: /system/role/list
-            fxml: /fxml/role_list.fxml
-      - id: api-monitor
-        label: API监控
-        labelKey: nav.api.monitor
-        path: /system/api-monitor
-        fxml: /fxml/api_monitor.fxml
-        icon: activity
+
+  - id: employee-mgmt
+    label: 员工管理
+    labelKey: nav.employee.mgmt
+    icon: user-list
+    expanded: true
+    children:
+      - id: employee-list
+        label: 员工列表
+        labelKey: nav.employee.list
+        path: /system/employee/list
+        fxml: /fxml/employee_list.fxml
+        icon: user-list
         options:
           cacheable: true
           closable: true
+      - id: employee-detail
+        label: 员工详情
+        labelKey: nav.employee.detail
+        path: /system/employee/detail/:id
+        fxml: /fxml/employee_detail.fxml
+        showInNav: false
+        options:
+          cacheable: false
+          closable: true
+      - id: user-detail
+        label: 用户详情
+        labelKey: nav.user.detail
+        path: /system/user/detail/:id
+        fxml: /fxml/user_detail.fxml
+        icon: user-detail
+        showInNav: false
+        options:
+          cacheable: false
+          supportsSubPage: true
+        children:
+          - id: user-basic
+            label: 基本信息
+            labelKey: nav.user.basic
+            tabId: basic
+            showInNav: false
+          - id: user-history
+            label: 操作记录
+            labelKey: nav.user.history
+            tabId: history
+            showInNav: false
+          - id: user-permission
+            label: 权限设置
+            labelKey: nav.user.permission
+            tabId: permission
+            showInNav: false
+      - id: user-create
+        label: 新增用户
+        labelKey: nav.user.create
+        path: /system/user/create
+        fxml: /fxml/user_form.fxml
+        showInNav: false
+        options:
+          singleton: true
+          confirmLeave: true
 
-  # 业务模块
-  - id: business
-    label: 业务
-    labelKey: nav.business
-    icon: business
+  - id: student-mgmt
+    label: 学生管理
+    labelKey: nav.student.mgmt
+    icon: graduation-cap
+    expanded: true
+    path: /student/classes
+    fxml: /fxml/student_classes.fxml
+    options:
+      cacheable: true
+      closable: true
     children:
-      - id: form-demo
-        label: 表单示例
-        labelKey: nav.form.demo
-        path: /form
-        fxml: /fxml/form.fxml
-        icon: form
-        options:
-          cacheable: true
-      - id: list-demo
-        label: 列表示例
-        labelKey: nav.list.demo
-        path: /list
-        fxml: /fxml/list.fxml
-        icon: list
-        options:
-          cacheable: true
+      - id: student-list
+        label: 班级学生
+        labelKey: nav.student.list
+        path: /student/class/:clazzId
+        fxml: /fxml/student_list.fxml
+        showInNav: false
+      - id: student-detail
+        label: 学生详情
+        labelKey: nav.student.detail
+        path: /student/detail/:id
+        fxml: /fxml/student_detail.fxml
+        showInNav: false
+
+  - id: role-mgmt
+    label: 角色管理
+    labelKey: nav.role.mgmt
+    icon: shield
+    expanded: true
+    children:
+      - id: role-list
+        label: 角色列表
+        labelKey: nav.role.list
+        path: /system/role/list
+        fxml: /fxml/role_list.fxml
+
+  - id: api-monitor
+    label: API监控
+    labelKey: nav.api.monitor
+    path: /system/api-monitor
+    fxml: /fxml/api_monitor.fxml
+    icon: activity
+    options:
+      cacheable: true
+      closable: true
 
 quickAccess:
   header:

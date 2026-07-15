@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="root" fx:controller="com.example.app.controller.ClassCardsController"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      spacing="12" styleClass="page-container">
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Label fx:id="titleLabel" text="学生管理" styleClass="page-title"/>
+    </HBox>
+
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="searchField" promptText="搜索全校区学生（姓名/手机号）" HBox.hgrow="ALWAYS" maxWidth="400"/>
+        <Button fx:id="searchBtn" text="搜索"/>
+        <Button fx:id="clearSearchBtn" text="清除搜索" visible="false" managed="false"/>
+    </HBox>
+
+    <ProgressIndicator fx:id="loadingIndicator" visible="false" maxWidth="40" maxHeight="40"/>
+
+    <Label fx:id="errorLabel" styleClass="error-message" visible="false" managed="false"/>
+
+    <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true">
+        <FlowPane fx:id="cardContainer" hgap="16" vgap="16"/>
+    </ScrollPane>
+
+    <VBox fx:id="searchResultContainer" visible="false" managed="false" VBox.vgrow="ALWAYS" spacing="8">
+        <TableView fx:id="searchResultTable" VBox.vgrow="ALWAYS"/>
+        <HBox spacing="8" alignment="CENTER">
+            <Button fx:id="prevBtn" text="上一页"/>
+            <Label fx:id="pageInfoLabel" text="1/1"/>
+            <Button fx:id="nextBtn" text="下一页"/>
+            <Label fx:id="totalLabel" text="共 0 条"/>
+        </HBox>
+    </VBox>
+
+    <VBox fx:id="emptyState" visible="false" managed="false" alignment="CENTER" spacing="8">
+        <Label text="暂无班级数据" styleClass="text-muted"/>
+    </VBox>
+</VBox>
