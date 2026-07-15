@@ -9,7 +9,7 @@ public class ClazzWithCountVO {
     private String name;
     private Object capacity;
     private List<TeachDTO> teachers;
-    private DatePeriod period;
+    private Object period;
     private Object vacancy;
     private Integer activeNum;
     private Integer leaveNum;
