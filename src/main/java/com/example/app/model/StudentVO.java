@@ -9,8 +9,8 @@ public class StudentVO {
     private String name;
     private String nickname;
     private String avatar;
-    private Integer sex;
-    private String bornDate;
+    private Object sex;
+    private Object bornDate;
     private String regTime;
     private String indate;
     private String status;

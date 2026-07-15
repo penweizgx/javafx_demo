@@ -10,6 +10,6 @@ public class ParentVO {
     private String phone;
     private Boolean master;
     private Integer relationship;
-    private Integer sex;
+    private Object sex;
     private String idCard;
 }

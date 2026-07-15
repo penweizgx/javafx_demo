@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 public class StudentDetailViewModel extends ViewModelBase {
 
@@ -86,8 +87,8 @@ public class StudentDetailViewModel extends ViewModelBase {
 
     private void populateViewData(StudentVO s, ClazzStudentMonthAttendVO attend, FinAccountVO account) {
         name.set(s.getName() != null ? s.getName() : "");
-        gender.set(s.getSex() != null ? (s.getSex() == 1 ? "男" : "女") : "");
-        birthday.set(s.getBornDate() != null ? s.getBornDate() : "");
+        gender.set(sexDisplay(s.getSex()));
+        birthday.set(bornDateDisplay(s.getBornDate()));
         phone.set(s.getPhone() != null ? s.getPhone() : "");
         address.set(s.getAddress() != null ? s.getAddress() : "");
         clazzName.set(s.getClazzname() != null ? s.getClazzname() : "");
@@ -132,8 +133,8 @@ public class StudentDetailViewModel extends ViewModelBase {
         editBuffer = new StudentFO();
         editBuffer.setId(student.getId());
         editBuffer.setName(student.getName());
-        editBuffer.setSex(student.getSex());
-        editBuffer.setBornDate(student.getBornDate());
+        editBuffer.setSex(sexToInt(student.getSex()));
+        editBuffer.setBornDate(bornDateDisplay(student.getBornDate()));
         editBuffer.setPhone(student.getPhone());
         editBuffer.setAddress(student.getAddress());
         if (student.getParents() != null && !student.getParents().isEmpty()) {
@@ -190,6 +191,26 @@ public class StudentDetailViewModel extends ViewModelBase {
             case "LEAVE" -> "离校";
             default -> status;
         };
+    }
+
+    private static int sexToInt(Object sex) {
+        if (sex instanceof Number) return ((Number) sex).intValue();
+        return 0;
+    }
+
+    private static String sexDisplay(Object sex) {
+        if (sex instanceof Number) return ((Number) sex).intValue() == 1 ? "男" : "女";
+        return "";
+    }
+
+    private static String bornDateDisplay(Object bornDate) {
+        if (bornDate == null) return "";
+        if (bornDate instanceof String) return (String) bornDate;
+        if (bornDate instanceof Map) {
+            Object date = ((Map<?, ?>) bornDate).get("date");
+            return date != null ? date.toString() : "";
+        }
+        return "";
     }
 
     private String getRelationText(int relationship) {

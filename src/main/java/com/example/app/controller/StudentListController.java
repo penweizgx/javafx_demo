@@ -84,7 +84,7 @@ public class StudentListController implements ParamReceiver {
         TableColumn<StudentVO, String> genderCol = new TableColumn<>("性别");
         genderCol.setUserData("student.col.gender");
         genderCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(
-                data.getValue().getSex() != null ? (data.getValue().getSex() == 1 ? "男" : "女") : ""));
+                sexDisplay(data.getValue().getSex())));
         genderCol.setPrefWidth(60);
 
         TableColumn<StudentVO, String> phoneCol = new TableColumn<>("手机号");
@@ -220,6 +220,11 @@ public class StudentListController implements ParamReceiver {
             case "LEAVE" -> Styles.DANGER;
             default -> "";
         };
+    }
+
+    private static String sexDisplay(Object sex) {
+        if (sex instanceof Number) return ((Number) sex).intValue() == 1 ? "男" : "女";
+        return "";
     }
 
     public void cleanup() {
