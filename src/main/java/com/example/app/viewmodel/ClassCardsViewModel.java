@@ -7,13 +7,16 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ClassCardsViewModel extends ViewModelBase {
 
     private final StudentManageService studentService;
@@ -69,13 +72,19 @@ public class ClassCardsViewModel extends ViewModelBase {
         executeAsync(
             () -> {
                 List<ClazzWithCountVO> classes = studentService.listClazzWithCount(null).join();
-                String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                List<ClazzDayAttendVO> attendData = studentService.countClazzDay(today).join();
-                Map<Long, Double> rateMap = attendData.stream()
-                    .collect(Collectors.toMap(
-                        ClazzDayAttendVO::getClazzId,
-                        a -> a.getTotal() > 0 ? (double) a.getAttend() / a.getTotal() * 100 : 0.0
-                    ));
+                Map<Long, Double> rateMap = new HashMap<>();
+                try {
+                    String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    List<ClazzDayAttendVO> attendData = studentService.countClazzDay(today).join();
+                    rateMap = attendData.stream()
+                        .collect(Collectors.toMap(
+                            ClazzDayAttendVO::getClazzId,
+                            a -> a.getTotal() > 0 ? (double) a.getAttend() / a.getTotal() * 100 : 0.0,
+                            (a, b) -> a
+                        ));
+                } catch (Exception e) {
+                    log.warn("Failed to load attendance data", e);
+                }
                 List<ClazzWithCountVO> finalClasses = classes;
                 Map<Long, Double> finalRates = rateMap;
                 return new Object() {

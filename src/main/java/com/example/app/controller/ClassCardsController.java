@@ -152,8 +152,10 @@ public class ClassCardsController {
             viewModel.searchTotalCountProperty()
         ));
 
-        viewModel.getClassList().addListener((javafx.collections.ListChangeListener<ClazzWithCountVO>) c -> {
-            renderCards();
+        viewModel.loadingProperty().addListener((obs, old, loading) -> {
+            if (!loading && !viewModel.getSearching().get()) {
+                renderCards();
+            }
         });
     }
 
