@@ -7,10 +7,10 @@ import java.util.List;
 public class ClazzWithCountVO {
     private Long id;
     private String name;
-    private Integer capacity;
+    private Object capacity;
     private List<TeachDTO> teachers;
     private DatePeriod period;
-    private Integer vacancy;
+    private Object vacancy;
     private Integer activeNum;
     private Integer leaveNum;
     private Integer regNum;

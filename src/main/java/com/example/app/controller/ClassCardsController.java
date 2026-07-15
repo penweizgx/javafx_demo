@@ -193,7 +193,7 @@ public class ClassCardsController {
             new Label("在读 " + (clazz.getActiveNum() != null ? clazz.getActiveNum() : 0) + "人"),
             new Label("登记 " + (clazz.getRegNum() != null ? clazz.getRegNum() : 0) + "人"),
             new Label("请假 " + (clazz.getLeaveNum() != null ? clazz.getLeaveNum() : 0) + "人"),
-            new Label("空位 " + (clazz.getVacancy() != null ? clazz.getVacancy() : 0) + "/" + (clazz.getCapacity() != null ? clazz.getCapacity() : 0))
+            new Label("空位 " + safeInt(clazz.getVacancy()) + "/" + safeInt(clazz.getCapacity()))
         );
 
         Separator sep2 = new Separator();
@@ -264,6 +264,12 @@ public class ClassCardsController {
             String colId = (String) col.getUserData();
             if (colId != null) col.setText(i18n.getString(colId));
         }
+    }
+
+    private int safeInt(Object value) {
+        if (value == null) return 0;
+        if (value instanceof Number) return ((Number) value).intValue();
+        try { return Integer.parseInt(value.toString()); } catch (NumberFormatException e) { return 0; }
     }
 
     private String getStatusText(String status) {
