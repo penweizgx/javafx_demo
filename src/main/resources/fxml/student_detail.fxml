@@ -30,6 +30,7 @@
 
             <!-- 基本信息区块 -->
             <Card>
+                <body>
                 <VBox spacing="8" styleClass="card-body">
                     <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
                     <Label text="基本信息" styleClass="section-title"/>
@@ -94,10 +95,12 @@
                         <ComboBox fx:id="parentRelationInput"/>
                     </HBox>
                 </VBox>
+                </body>
             </Card>
 
             <!-- 考勤信息区块 -->
             <Card>
+                <body>
                 <VBox spacing="8" styleClass="card-body">
                     <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
                     <Label text="考勤信息" styleClass="section-title"/>
@@ -116,10 +119,12 @@
                         </VBox>
                     </HBox>
                 </VBox>
+                </body>
             </Card>
 
             <!-- 财务信息区块 -->
             <Card>
+                <body>
                 <VBox spacing="8" styleClass="card-body">
                     <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
                     <Label text="财务信息" styleClass="section-title"/>
@@ -128,15 +133,18 @@
                         <Label fx:id="balanceValue" styleClass="text-bold"/>
                     </HBox>
                 </VBox>
+                </body>
             </Card>
 
             <!-- 班级变动历史区块 -->
             <Card>
+                <body>
                 <VBox spacing="8" styleClass="card-body">
                     <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
                     <Label text="班级变动历史" styleClass="section-title"/>
                     <Label fx:id="historyValue"/>
                 </VBox>
+                </body>
             </Card>
         </VBox>
     </ScrollPane>
