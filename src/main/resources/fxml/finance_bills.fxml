@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="root" fx:controller="com.example.app.controller.FinanceBillsController"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      spacing="12" styleClass="page-container">
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-header">
+        <Label fx:id="titleLabel" text="账单管理" styleClass="page-title"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="searchField" promptText="搜索学生姓名..." prefWidth="180"/>
+        <ComboBox fx:id="clazzCombo" promptText="选择班级" prefWidth="150"/>
+        <ComboBox fx:id="billTypeCombo" promptText="账单类型" prefWidth="130"/>
+        <Label text="从"/>
+        <DatePicker fx:id="startDatePicker" prefWidth="130"/>
+        <Label text="至"/>
+        <DatePicker fx:id="endDatePicker" prefWidth="130"/>
+        <CheckBox fx:id="filterInvalidCheck" text="过滤已作废"/>
+        <Button fx:id="queryBtn" text="查询" styleClass="primary"/>
+        <Button fx:id="exportBtn" text="导出" styleClass="button-outlined"/>
+    </HBox>
+
+    <ProgressIndicator fx:id="loadingIndicator" visible="false" maxWidth="40" maxHeight="40"/>
+
+    <Label fx:id="errorLabel" styleClass="error-message" visible="false" managed="false"/>
+
+    <TableView fx:id="billTable" VBox.vgrow="ALWAYS"/>
+
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-footer">
+        <Button fx:id="prevBtn" text="上一页"/>
+        <Label fx:id="pageInfoLabel" text="1/1"/>
+        <Button fx:id="nextBtn" text="下一页"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Label fx:id="totalLabel" text="共 0 条"/>
+    </HBox>
+</VBox>

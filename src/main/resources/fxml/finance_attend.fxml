@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="root" fx:controller="com.example.app.controller.FinanceAttendController"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      spacing="12" styleClass="page-container">
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-header">
+        <Label fx:id="titleLabel" text="考勤退费" styleClass="page-title"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="monthField" promptText="月份 (yyyy-MM)" prefWidth="150"/>
+        <ComboBox fx:id="clazzCombo" promptText="选择班级" prefWidth="160"/>
+        <CheckBox fx:id="onlyRefundCheck" text="仅显示有退费"/>
+        <Button fx:id="queryBtn" text="查询" styleClass="primary"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Button fx:id="confirmBtn" text="确认结转" styleClass="primary"/>
+    </HBox>
+
+    <ProgressIndicator fx:id="loadingIndicator" visible="false" maxWidth="40" maxHeight="40"/>
+
+    <Label fx:id="errorLabel" styleClass="error-message" visible="false" managed="false"/>
+
+    <Label fx:id="confirmLabel" style="-fx-text-fill: #2e7d32; -fx-font-size: 13px;" visible="false" managed="false"/>
+
+    <TableView fx:id="refundTable" VBox.vgrow="ALWAYS"/>
+
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-footer">
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Label fx:id="totalLabel" text="共 0 条"/>
+    </HBox>
+</VBox>
