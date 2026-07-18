@@ -79,6 +79,7 @@ public class ApiMonitorController {
     private void buildDetailPanel() {
         detailPanel = new VBox(6);
         detailPanel.setMinWidth(280);
+        detailPanel.getStyleClass().add("detail-panel");
 
         HBox header = new HBox(8);
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);

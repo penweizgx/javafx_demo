@@ -52,17 +52,18 @@
     -fx-background-color: -color-bg-subtle;
 }
 
-.copyable-field {
+.copyable-field,
+.copyable-field:readonly,
+.copyable-field:focused,
+.copyable-field:readonly:focused {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-border-color: transparent;
+    -fx-border-width: 0;
     -fx-border-insets: 0;
     -fx-padding: 2 4;
-    -fx-font-size: inherit;
 }
-.copyable-field:focused {
-    -fx-background-color: transparent;
-    -fx-border-color: -color-accent-muted;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-insets: 0;
+
+.detail-panel {
+    -fx-padding: 8 12;
 }
