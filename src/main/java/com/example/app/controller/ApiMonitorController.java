@@ -88,7 +88,7 @@ public class ApiMonitorController {
         HBox spacer = new HBox();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         closeDetailBtn = new Button("✕");
-        closeDetailBtn.getStyleClass().addAll("button-icon", "small");
+        closeDetailBtn.getStyleClass().add("small");
         header.getChildren().addAll(headerLabel, spacer, closeDetailBtn);
 
         GridPane grid = new GridPane();
@@ -272,6 +272,7 @@ public class ApiMonitorController {
         closeDetailBtn.setOnAction(e -> {
             logTable.getSelectionModel().clearSelection();
             viewModel.selectedLogProperty().set(null);
+            splitPane.getItems().remove(detailPanel);
         });
     }
 
