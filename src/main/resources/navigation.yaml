@@ -133,6 +133,67 @@ navigation:
       cacheable: true
       closable: true
 
+  - id: finance-mgmt
+    label: 财务中心
+    labelKey: nav.finance.mgmt
+    icon: wallet
+    expanded: true
+    children:
+      - id: finance-account
+        label: 学生账户
+        labelKey: nav.finance.account
+        path: /finance/account
+        fxml: /fxml/finance_account_list.fxml
+        icon: wallet
+        options:
+          cacheable: true
+          closable: true
+      - id: finance-bills
+        label: 费用记录
+        labelKey: nav.finance.bills
+        path: /finance/bills
+        fxml: /fxml/finance_bills.fxml
+        icon: receipt
+        options:
+          cacheable: true
+          closable: true
+      - id: finance-attend
+        label: 考勤退费
+        labelKey: nav.finance.attend
+        path: /finance/attend
+        fxml: /fxml/finance_attend.fxml
+        icon: calendar
+        options:
+          cacheable: true
+          closable: true
+      - id: finance-subject
+        label: 项目标准
+        labelKey: nav.finance.subject
+        path: /finance/subject
+        fxml: /fxml/finance_subject.fxml
+        icon: list
+        options:
+          cacheable: true
+          closable: true
+      - id: finance-reports
+        label: 统计报表
+        labelKey: nav.finance.reports
+        path: /finance/reports
+        fxml: /fxml/finance_reports.fxml
+        icon: bar-chart
+        options:
+          cacheable: true
+          closable: true
+      - id: finance-config
+        label: 配置
+        labelKey: nav.finance.config
+        path: /finance/config
+        fxml: /fxml/finance_config.fxml
+        icon: settings
+        options:
+          cacheable: true
+          closable: true
+
 quickAccess:
   header:
     - id: pending

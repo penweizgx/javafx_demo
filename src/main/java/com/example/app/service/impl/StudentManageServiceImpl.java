@@ -4,6 +4,7 @@ import com.example.app.api.ApiException;
 import com.example.app.api.okhttp.StudentApiServiceImpl;
 import com.example.app.exception.ExceptionHandler;
 import com.example.app.model.*;
+import com.example.app.service.FinanceManageService;
 import com.example.app.service.StudentManageService;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +16,12 @@ import java.util.concurrent.CompletableFuture;
 public class StudentManageServiceImpl implements StudentManageService {
 
     private final StudentApiServiceImpl studentApiService;
+    private final FinanceManageService financeManageService;
 
     @Inject
-    public StudentManageServiceImpl(StudentApiServiceImpl studentApiService) {
+    public StudentManageServiceImpl(StudentApiServiceImpl studentApiService, FinanceManageService financeManageService) {
         this.studentApiService = studentApiService;
+        this.financeManageService = financeManageService;
     }
 
     @Override
@@ -133,13 +136,6 @@ public class StudentManageServiceImpl implements StudentManageService {
 
     @Override
     public CompletableFuture<FinAccountVO> financeAccount(Long studentId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return studentApiService.financeAccount(studentId);
-            } catch (ApiException e) {
-                ExceptionHandler.handle(e, "Failed to load finance info");
-                throw new RuntimeException("加载财务信息失败: " + e.getMessage(), e);
-            }
-        });
+        return financeManageService.financeAccount(studentId);
     }
 }

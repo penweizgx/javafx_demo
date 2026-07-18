@@ -90,6 +90,7 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
 
     public List<ClazzWithCountVO> listClazzWithCount(Long schId) throws ApiException {
         Map<String, Object> queryParams = new HashMap<>();
+        queryParams.put("includeLeaved", false);
         if (schId != null) queryParams.put("schId", schId);
         String url = ApiUrl.Org.CLAZZ_LIST_WITH_COUNT.getUrl(configStorage);
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
@@ -135,12 +136,6 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
         String url = ApiUrl.Attend.LIST_MONTH_ATTEND_STUDENT.getUrl(configStorage) + "/" + clazzId;
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
         return extractResBodyAs(response, ClazzStudentMonthAttendVO.class);
-    }
-
-    public FinAccountVO financeAccount(Long studentId) throws ApiException {
-        String url = ApiUrl.Finance.ACCOUNT.getUrl(configStorage) + "/" + studentId;
-        String response = (String) this.get(url);
-        return extractResBodyAs(response, FinAccountVO.class);
     }
 
     private JsonElement extractResBodyJsonElement(String responseContent) throws ApiException {
