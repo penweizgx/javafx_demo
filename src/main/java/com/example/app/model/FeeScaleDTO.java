@@ -11,5 +11,5 @@ public class FeeScaleDTO {
     private String unit;
     private Boolean disabled;
     private String remark;
-    private Integer used;
+    private String used;
 }

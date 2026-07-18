@@ -4,18 +4,28 @@ import com.example.app.api.ApiException;
 import com.example.app.api.ApiUrl;
 import com.example.app.model.*;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
 
 @Slf4j
 public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
 
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Integer.class, new LenientIntegerAdapter())
+            .registerTypeAdapter(Long.class, new LenientLongAdapter())
+            .registerTypeAdapter(int.class, new LenientIntegerAdapter())
+            .registerTypeAdapter(long.class, new LenientLongAdapter())
+            .create();
 
     @Inject
     public FinanceApiServiceImpl() {
@@ -399,5 +409,41 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         if (dto.getDisabled() != null) params.put("disabled", dto.getDisabled());
         if (dto.getRefund() != null) params.put("refund", dto.getRefund());
         return params;
+    }
+
+    private static class LenientIntegerAdapter extends TypeAdapter<Integer> {
+        @Override
+        public void write(JsonWriter out, Integer value) throws IOException {
+            if (value == null) out.nullValue();
+            else out.value(value);
+        }
+
+        @Override
+        public Integer read(JsonReader in) throws IOException {
+            try {
+                return in.nextInt();
+            } catch (NumberFormatException | IllegalStateException e) {
+                in.skipValue();
+                return null;
+            }
+        }
+    }
+
+    private static class LenientLongAdapter extends TypeAdapter<Long> {
+        @Override
+        public void write(JsonWriter out, Long value) throws IOException {
+            if (value == null) out.nullValue();
+            else out.value(value);
+        }
+
+        @Override
+        public Long read(JsonReader in) throws IOException {
+            try {
+                return in.nextLong();
+            } catch (NumberFormatException | IllegalStateException e) {
+                in.skipValue();
+                return null;
+            }
+        }
     }
 }
