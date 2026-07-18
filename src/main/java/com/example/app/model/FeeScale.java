@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class FeeScale {
     private Long id;
-    private Integer version;
-    private Long modifiedAt;
-    private Long createdAt;
+    private String version;
+    private String modifiedAt;
+    private String createdAt;
     private Subject subject;
     private String name;
     private Number standardAmount;

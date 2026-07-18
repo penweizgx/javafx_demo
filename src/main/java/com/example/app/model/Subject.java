@@ -8,9 +8,9 @@ public class Subject {
     private String name;
     private String type;
     private Long schId;
-    private Integer version;
-    private Long modifiedAt;
-    private Long createdAt;
+    private String version;
+    private String modifiedAt;
+    private String createdAt;
     private Integer day;
     private Integer alloc;
     private String remark;

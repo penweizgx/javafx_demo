@@ -7,11 +7,11 @@ import java.util.Map;
 @Data
 public class FinAccountVO {
     private Long id;
-    private Integer version;
-    private Long modifiedAt;
-    private Long createdAt;
+    private String version;
+    private String modifiedAt;
+    private String createdAt;
     private Long studentId;
-    private Number refundAmount;
+    private String refundAmount;
     private Number totalAmount;
     private Number balancesAmount;
     private List<FeeScale> feeScales;
