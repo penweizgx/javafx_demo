@@ -28,45 +28,6 @@
 
     <SplitPane fx:id="splitPane" VBox.vgrow="ALWAYS" dividerPositions="0.6">
         <TableView fx:id="logTable"/>
-
-        <VBox fx:id="detailPanel" spacing="6" minWidth="280" visible="false" managed="false">
-            <HBox spacing="8" alignment="CENTER_LEFT">
-                <Label text="请求详情" styleClass="h5"/>
-                <HBox HBox.hgrow="ALWAYS"/>
-                <Button fx:id="closeDetailBtn" text="✕" styleClass="button-icon, small"/>
-            </HBox>
-            <Separator/>
-
-            <GridPane hgap="8" vgap="6">
-                <columnConstraints>
-                    <ColumnConstraints minWidth="70" prefWidth="70"/>
-                    <ColumnConstraints hgrow="ALWAYS"/>
-                </columnConstraints>
-                <Label text="Method" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <Label fx:id="detailMethodLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                <Label text="Status" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <Label fx:id="detailStatusLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <Label text="Duration" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <Label fx:id="detailDurationLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <Label text="Time" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <Label fx:id="detailTimeLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" wrapText="true"/>
-                <Label text="URL" styleClass="bold" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <Label fx:id="detailUrlLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" wrapText="true"/>
-            </GridPane>
-
-            <Separator/>
-
-            <VBox spacing="4" VBox.vgrow="ALWAYS">
-                <Label text="请求参数" styleClass="bold"/>
-                <TextArea fx:id="detailRequestArea" wrapText="true" editable="false"
-                          prefRowCount="6" VBox.vgrow="ALWAYS" styleClass="rounded"/>
-            </VBox>
-            <VBox spacing="4" VBox.vgrow="ALWAYS">
-                <Label text="返回参数" styleClass="bold"/>
-                <TextArea fx:id="detailResponseArea" wrapText="true" editable="false"
-                          prefRowCount="6" VBox.vgrow="ALWAYS" styleClass="rounded"/>
-            </VBox>
-        </VBox>
     </SplitPane>
 
 </VBox>

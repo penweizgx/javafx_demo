@@ -8,10 +8,13 @@ import com.example.app.model.ApiRequestLog;
 import com.example.app.navigation.EventBus;
 import com.example.app.service.ApiMonitorService;
 import com.example.app.viewmodel.ApiMonitorViewModel;
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.time.Instant;
@@ -41,33 +44,16 @@ public class ApiMonitorController {
     private TableView<ApiRequestLog> logTable;
 
     @FXML
-    private VBox detailPanel;
-
-    @FXML
     private SplitPane splitPane;
 
-    @FXML
+    private VBox detailPanel;
     private Button closeDetailBtn;
-
-    @FXML
-    private Label detailUrlLabel;
-
-    @FXML
-    private Label detailMethodLabel;
-
-    @FXML
-    private Label detailStatusLabel;
-
-    @FXML
-    private Label detailDurationLabel;
-
-    @FXML
-    private Label detailTimeLabel;
-
-    @FXML
+    private TextField detailMethodField;
+    private TextField detailStatusField;
+    private TextField detailDurationField;
+    private TextField detailTimeField;
+    private TextField detailUrlField;
     private TextArea detailRequestArea;
-
-    @FXML
     private TextArea detailResponseArea;
 
     private ApiMonitorViewModel viewModel;
@@ -83,10 +69,87 @@ public class ApiMonitorController {
             this.i18n = AppContext.get().getService(I18nService.class);
         } catch (Exception ignored) {}
 
+        buildDetailPanel();
         setupTable();
         bindViewModel();
         setupEventHandlers();
         subscribeEvents();
+    }
+
+    private void buildDetailPanel() {
+        detailPanel = new VBox(6);
+        detailPanel.setMinWidth(280);
+
+        HBox header = new HBox(8);
+        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Label headerLabel = new Label("请求详情");
+        headerLabel.getStyleClass().add("h5");
+        HBox spacer = new HBox();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        closeDetailBtn = new Button("✕");
+        closeDetailBtn.getStyleClass().addAll("button-icon", "small");
+        header.getChildren().addAll(headerLabel, spacer, closeDetailBtn);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(6);
+        ColumnConstraints labelCol = new ColumnConstraints(70, 70, 70);
+        ColumnConstraints valueCol = new ColumnConstraints();
+        valueCol.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(labelCol, valueCol);
+
+        String[] labels = {"Method", "Status", "Duration", "Time", "URL"};
+        detailMethodField = createCopyableField();
+        detailStatusField = createCopyableField();
+        detailDurationField = createCopyableField();
+        detailTimeField = createCopyableField();
+        detailUrlField = createCopyableField();
+        TextField[] fields = {detailMethodField, detailStatusField, detailDurationField, detailTimeField, detailUrlField};
+
+        for (int i = 0; i < labels.length; i++) {
+            Label lbl = new Label(labels[i]);
+            lbl.getStyleClass().add("bold");
+            grid.add(lbl, 0, i);
+            grid.add(fields[i], 1, i);
+        }
+
+        Separator sep1 = new Separator();
+
+        VBox reqBox = new VBox(4);
+        Label reqLabel = new Label("请求参数");
+        reqLabel.getStyleClass().add("bold");
+        detailRequestArea = new TextArea();
+        detailRequestArea.setWrapText(true);
+        detailRequestArea.setEditable(false);
+        detailRequestArea.setPrefRowCount(6);
+        detailRequestArea.getStyleClass().add("rounded");
+        VBox.setVgrow(detailRequestArea, Priority.ALWAYS);
+        reqBox.getChildren().addAll(reqLabel, detailRequestArea);
+        VBox.setVgrow(reqBox, Priority.ALWAYS);
+
+        VBox resBox = new VBox(4);
+        Label resLabel = new Label("返回参数");
+        resLabel.getStyleClass().add("bold");
+        detailResponseArea = new TextArea();
+        detailResponseArea.setWrapText(true);
+        detailResponseArea.setEditable(false);
+        detailResponseArea.setPrefRowCount(6);
+        detailResponseArea.getStyleClass().add("rounded");
+        VBox.setVgrow(detailResponseArea, Priority.ALWAYS);
+        resBox.getChildren().addAll(resLabel, detailResponseArea);
+        VBox.setVgrow(resBox, Priority.ALWAYS);
+
+        Separator sep2 = new Separator();
+
+        detailPanel.getChildren().addAll(header, sep1, grid, sep2, reqBox, resBox);
+    }
+
+    private TextField createCopyableField() {
+        TextField field = new TextField();
+        field.setEditable(false);
+        field.setFocusTraversable(false);
+        field.getStyleClass().add("copyable-field");
+        return field;
     }
 
     private void setupTable() {
@@ -195,8 +258,6 @@ public class ApiMonitorController {
         });
 
         viewModel.selectedLogProperty().isNotNull().addListener((obs, wasNotNull, isNotNull) -> {
-            detailPanel.setVisible(isNotNull);
-            detailPanel.setManaged(isNotNull);
             if (isNotNull) {
                 if (!splitPane.getItems().contains(detailPanel)) {
                     splitPane.getItems().add(detailPanel);
@@ -207,39 +268,29 @@ public class ApiMonitorController {
             }
         });
 
-        if (closeDetailBtn != null) {
-            closeDetailBtn.setOnAction(e -> {
-                logTable.getSelectionModel().clearSelection();
-                viewModel.selectedLogProperty().set(null);
-            });
-        }
-
-        setupTextAreaSelectionFix(detailRequestArea);
-        setupTextAreaSelectionFix(detailResponseArea);
-    }
-
-    private void setupTextAreaSelectionFix(TextArea textArea) {
-        textArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, MouseEvent::consume);
-        textArea.addEventHandler(MouseEvent.MOUSE_RELEASED, MouseEvent::consume);
+        closeDetailBtn.setOnAction(e -> {
+            logTable.getSelectionModel().clearSelection();
+            viewModel.selectedLogProperty().set(null);
+        });
     }
 
     private void showDetail(ApiRequestLog log) {
         if (log == null) {
-            detailUrlLabel.setText("");
-            detailMethodLabel.setText("");
-            detailStatusLabel.setText("");
-            detailDurationLabel.setText("");
-            detailTimeLabel.setText("");
+            detailUrlField.setText("");
+            detailMethodField.setText("");
+            detailStatusField.setText("");
+            detailDurationField.setText("");
+            detailTimeField.setText("");
             detailRequestArea.setText("");
             detailResponseArea.setText("");
             return;
         }
-        detailUrlLabel.setText(log.getUrl());
-        detailMethodLabel.setText(log.getMethod());
-        detailStatusLabel.setText(String.valueOf(log.getStatusCode()));
-        detailDurationLabel.setText(log.getDurationMs() + "ms");
+        detailUrlField.setText(log.getUrl());
+        detailMethodField.setText(log.getMethod());
+        detailStatusField.setText(String.valueOf(log.getStatusCode()));
+        detailDurationField.setText(log.getDurationMs() + "ms");
         LocalDateTime ldt = LocalDateTime.ofInstant(Instant.ofEpochMilli(log.getTimestamp()), ZoneId.systemDefault());
-        detailTimeLabel.setText(ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")));
+        detailTimeField.setText(ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")));
 
         StringBuilder reqText = new StringBuilder();
         if (log.getRequestParams() != null && !log.getRequestParams().isEmpty()) {
