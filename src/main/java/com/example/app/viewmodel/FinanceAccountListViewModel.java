@@ -57,8 +57,8 @@ public class FinanceAccountListViewModel extends ViewModelBase {
         try {
             UserService userService = AppContext.get().getService(UserService.class);
             User user = userService.getCachedUser();
-            if (user != null && user.getOrgBound() != null) {
-                this.schId = Long.parseLong(user.getId());
+            if (user != null) {
+                this.schId = user.getOrgUnitId();
             }
         } catch (Exception e) {
             ExceptionHandler.handle(e, "Failed to load schId");

@@ -40,6 +40,10 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
+        if (!resbody.isJsonArray()) {
+            log.warn("listByCondition resbody is not an array: {}", resbody);
+            return Collections.emptyList();
+        }
         Type listType = new TypeToken<List<FinAccountVO>>() {}.getType();
         return gson.fromJson(resbody, listType);
     }
