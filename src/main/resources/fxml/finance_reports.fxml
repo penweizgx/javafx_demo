@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+
+<VBox fx:id="root" fx:controller="com.example.app.controller.FinanceReportsController"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      spacing="12" styleClass="page-container">
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-header">
+        <Label fx:id="titleLabel" text="财务报表" styleClass="page-title"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="monthField" promptText="月份 (yyyy-MM)" prefWidth="150"/>
+        <Button fx:id="queryBtn" text="查询" styleClass="accent"/>
+    </HBox>
+
+    <ProgressIndicator fx:id="loadingIndicator" visible="false" maxWidth="40" maxHeight="40"/>
+
+    <Label fx:id="errorLabel" styleClass="error-message" visible="false" managed="false"/>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <VBox spacing="16">
+            <VBox spacing="8" styleClass="card">
+                <Label text="汇总概览" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <GridPane fx:id="summaryGrid" hgap="16" vgap="8"/>
+            </VBox>
+
+            <VBox spacing="8" styleClass="card">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="项目分析" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                    <HBox HBox.hgrow="ALWAYS"/>
+                    <Label text="维度:"/>
+                    <ComboBox fx:id="dimensionCombo" prefWidth="120"/>
+                </HBox>
+                <TableView fx:id="subjectTable" prefHeight="200"/>
+                <BarChart fx:id="subjectBarChart" prefHeight="300">
+                    <xAxis>
+                        <CategoryAxis fx:id="subjectXAxis" label="项目"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="subjectYAxis" label="金额"/>
+                    </yAxis>
+                </BarChart>
+            </VBox>
+
+            <VBox spacing="8" styleClass="card">
+                <Label text="结转项目" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <HBox spacing="16">
+                    <TableView fx:id="carryOverTable" prefHeight="200" HBox.hgrow="ALWAYS"/>
+                    <PieChart fx:id="carryOverPieChart" prefWidth="300" prefHeight="250"/>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="8" styleClass="card">
+                <Label text="收款方式" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <HBox spacing="16">
+                    <TableView fx:id="payChancelTable" prefHeight="200" HBox.hgrow="ALWAYS"/>
+                    <PieChart fx:id="payChancelPieChart" prefWidth="300" prefHeight="250"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</VBox>

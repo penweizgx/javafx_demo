@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="root" fx:controller="com.example.app.controller.FinanceConfigController"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      spacing="12" styleClass="page-container">
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-header">
+        <Label fx:id="titleLabel" text="财务配置" styleClass="page-title"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <ProgressIndicator fx:id="loadingIndicator" visible="false" maxWidth="40" maxHeight="40"/>
+
+    <Label fx:id="errorLabel" styleClass="error-message" visible="false" managed="false"/>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <VBox spacing="16">
+            <VBox spacing="8" styleClass="card">
+                <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                <Label text="收款方式" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Button fx:id="addPayChancelBtn" text="新增" styleClass="accent, small"/>
+                </HBox>
+                <TableView fx:id="payChancelTable" prefHeight="180"/>
+            </VBox>
+
+            <VBox spacing="8" styleClass="card">
+                <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                <Label text="账单编号规则" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <GridPane hgap="12" vgap="8">
+                    <Label text="编号长度:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <Spinner fx:id="lengthSpinner" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <Label text="前缀:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                    <TextField fx:id="prefixField" prefWidth="100" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                    <Label text="起始号:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="startField" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <Label text="流水号:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                    <TextField fx:id="serialnoField" prefWidth="100" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                </GridPane>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Button fx:id="saveBillRuleBtn" text="保存" styleClass="accent, small"/>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="8" styleClass="card">
+                <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                <Label text="缴费提醒天数" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="提前"/>
+                    <Spinner fx:id="remindSpinner" prefWidth="100"/>
+                    <Label text="天提醒"/>
+                    <Button fx:id="saveRemindBtn" text="保存" styleClass="accent, small"/>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="8" styleClass="card">
+                <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                <Label text="考勤退费阈值" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="连续"/>
+                    <Spinner fx:id="continuousSpinner" prefWidth="100"/>
+                    <Label text="天未到校触发退费"/>
+                    <Button fx:id="saveContinuousBtn" text="保存" styleClass="accent, small"/>
+                    <Button fx:id="validateBtn" text="校验" styleClass="button-outlined, small"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</VBox>
