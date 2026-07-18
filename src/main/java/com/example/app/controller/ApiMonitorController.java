@@ -11,6 +11,7 @@ import com.example.app.viewmodel.ApiMonitorViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import java.time.Instant;
@@ -41,6 +42,12 @@ public class ApiMonitorController {
 
     @FXML
     private VBox detailPanel;
+
+    @FXML
+    private SplitPane splitPane;
+
+    @FXML
+    private Button closeDetailBtn;
 
     @FXML
     private Label detailUrlLabel;
@@ -187,8 +194,33 @@ public class ApiMonitorController {
             showDetail(newVal);
         });
 
-        detailPanel.visibleProperty().bind(viewModel.selectedLogProperty().isNotNull());
-        detailPanel.managedProperty().bind(viewModel.selectedLogProperty().isNotNull());
+        viewModel.selectedLogProperty().isNotNull().addListener((obs, wasNotNull, isNotNull) -> {
+            detailPanel.setVisible(isNotNull);
+            detailPanel.setManaged(isNotNull);
+            if (isNotNull) {
+                if (!splitPane.getItems().contains(detailPanel)) {
+                    splitPane.getItems().add(detailPanel);
+                    splitPane.setDividerPositions(0.6);
+                }
+            } else {
+                splitPane.getItems().remove(detailPanel);
+            }
+        });
+
+        if (closeDetailBtn != null) {
+            closeDetailBtn.setOnAction(e -> {
+                logTable.getSelectionModel().clearSelection();
+                viewModel.selectedLogProperty().set(null);
+            });
+        }
+
+        setupTextAreaSelectionFix(detailRequestArea);
+        setupTextAreaSelectionFix(detailResponseArea);
+    }
+
+    private void setupTextAreaSelectionFix(TextArea textArea) {
+        textArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, MouseEvent::consume);
+        textArea.addEventHandler(MouseEvent.MOUSE_RELEASED, MouseEvent::consume);
     }
 
     private void showDetail(ApiRequestLog log) {

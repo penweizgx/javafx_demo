@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.geometry.Insets?>
 
@@ -25,11 +26,15 @@
         <Button fx:id="clearBtn" text="清空" styleClass="danger"/>
     </HBox>
 
-    <HBox spacing="8" VBox.vgrow="ALWAYS">
-        <TableView fx:id="logTable" HBox.hgrow="ALWAYS"/>
+    <SplitPane fx:id="splitPane" VBox.vgrow="ALWAYS" dividerPositions="0.6">
+        <TableView fx:id="logTable"/>
 
-        <VBox fx:id="detailPanel" spacing="6" prefWidth="380" minWidth="300" visible="false" managed="false">
-            <Label text="请求详情" styleClass="h5"/>
+        <VBox fx:id="detailPanel" spacing="6" minWidth="280" visible="false" managed="false">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="请求详情" styleClass="h5"/>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <Button fx:id="closeDetailBtn" text="✕" styleClass="button-icon, small"/>
+            </HBox>
             <Separator/>
 
             <GridPane hgap="8" vgap="6">
@@ -62,6 +67,6 @@
                           prefRowCount="6" VBox.vgrow="ALWAYS" styleClass="rounded"/>
             </VBox>
         </VBox>
-    </HBox>
+    </SplitPane>
 
 </VBox>
