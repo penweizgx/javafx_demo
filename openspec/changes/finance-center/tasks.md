@@ -28,7 +28,7 @@
 - [x] 1.26 Create PayChancelReport model (id, name, amount)
 - [x] 1.27 Create ChargeReportItem model (billnumber, studentNum, receivableAmount, payAmount, balancesAmount, amount)
 - [x] 1.28 Create StuentParent model (id, name)
-- [x] 1.29 Add Finance enum entries to ApiUrl.java (COUNT_BRIEF, LIST_BY_CONDITION, CHARGE_BILLS, BUILD_CHARGE_FORM, CHARGE, FEE_SCALE_BIND, CLOSE, IMPORT_CHARGE, EXPORT_FINANCE_ACCOUNT, STUDENTS, BILLS_LIST, CHARGE_DETAIL, INVALID_CHARGE, INVALID_CARRY, EXPORT_CHARGE_BILL, LIST_MONTH_ATTEND_CARRY_OVER, ATTEND_CARRY_OVER_BILL, CONFIRM_MONTH_ATTEND_CARRY_OVER, ATTEND_CARRY_OVER_CONFIG, SUBJECT_LIST, SUBJECT_ADD, SUBJECT_EDIT, SUBJECT_DISABLE, SUBJECT_REMOVE, FEES_SCALE_ADD, FEES_SCALE_CHANGE_NAME, FEE_SCALE_DISABLE, FEE_SCALE_BATCH_BIND, COUNT_CHARGE_REPORT, SUM_CHARGE_SUBJECT_REPORT, SUM_CARRY_OVER_SUBJECT_REPORT, COUNT_PAY_CHANCEL_REPORT, CONFIG, BILL_NUMBER_RULE, BILL_NUMBER_RULE_SAVE, PAY_CHANCELS_LIST, PAY_CHANCEL_ADD, PAY_CHANCEL_REMOVE, DEPOSIT, REFUND, REFUND_INVALID, CARRY_OVER_CHARGE, TRANSPORT_DEPOSIT, BATCH_CHARGE, VALIDATE, EXPORT_IMPORT_CHARGE_ERROR)
+- [x] 1.29 Add Finance enum entries to ApiUrl.java
 - [x] 1.30 Create FinanceApiServiceImpl extending OkHttpApiServiceImpl with all finance API methods
 
 ## 2. Service Layer
@@ -48,60 +48,60 @@
 
 ## 4. Student Account Page (finance-account)
 
-- [ ] 4.1 Create FinanceAccountListViewModel (dashboard data, student list, loading state, filter properties)
-- [ ] 4.2 Create finance_account_list.fxml (dashboard cards, filter bar, student table, pagination)
-- [ ] 4.3 Create FinanceAccountListController (dashboard loading, table setup, filter handlers, navigation to detail/charge/settings)
-- [ ] 4.4 Create FinanceAccountDetailModal component (basic info, fee items table, charge history table, action buttons)
-- [ ] 4.5 Create ChargeModal component (fee item selection, amount/period input, balance deduction, payment method selection, payer selection, submit)
-- [ ] 4.6 Create FeeScaleBindModal component (TabPane by subject, fee scale checkboxes, submit with feeScale/bind)
-- [ ] 4.7 Add import charge dialog to FinanceAccountListController
-- [ ] 4.8 Add export functionality to FinanceAccountListController
+- [x] 4.1 Create FinanceAccountListViewModel (dashboard data, student list, loading state, filter properties)
+- [x] 4.2 Create finance_account_list.fxml (dashboard cards, filter bar, student table, pagination)
+- [x] 4.3 Create FinanceAccountListController (dashboard loading, table setup, filter handlers, navigation to detail/charge/settings)
+- [x] 4.4 Create FinanceAccountDetailModal component (basic info, fee items table, charge history table, action buttons)
+- [x] 4.5 Create ChargeModal component (fee item selection, amount/period input, balance deduction, payment method selection, payer selection, submit)
+- [x] 4.6 Create FeeScaleBindModal component (TabPane by subject, fee scale checkboxes, submit with feeScale/bind)
+- [x] 4.7 Add import charge dialog to FinanceAccountListController
+- [x] 4.8 Add export functionality to FinanceAccountListController
 
 ## 5. Bills Page (finance-bills)
 
-- [ ] 5.1 Create FinanceBillsViewModel (bill list, pagination state, filter properties)
-- [ ] 5.2 Create finance_bills.fxml (filter bar, bill table, pagination)
-- [ ] 5.3 Create FinanceBillsController (filter handlers, table setup with BillTimeDTO columns, pagination)
-- [ ] 5.4 Create BillDetailModal component (charge bill detail with subject items, payment channels, carry-over bills)
-- [ ] 5.5 Add invalidate charge/carry-over actions to FinanceBillsController
-- [ ] 5.6 Add export bills functionality
+- [x] 5.1 Create FinanceBillsViewModel (bill list, pagination state, filter properties)
+- [x] 5.2 Create finance_bills.fxml (filter bar, bill table, pagination)
+- [x] 5.3 Create FinanceBillsController (filter handlers, table setup with BillTimeDTO columns, pagination)
+- [x] 5.4 Create BillDetailModal component (charge bill detail with subject items, payment channels, carry-over bills)
+- [x] 5.5 Add invalidate charge/carry-over actions to FinanceBillsController
+- [x] 5.6 Add export bills functionality
 
 ## 6. Attendance Refund Page (finance-attend)
 
-- [ ] 6.1 Create FinanceAttendViewModel (refund list, month/clazz filter, onlyRefund property)
-- [ ] 6.2 Create finance_attend.fxml (month picker, class dropdown, onlyRefund checkbox, refund table)
-- [ ] 6.3 Create FinanceAttendController (filter handlers, table setup with MonthAttendCarryOverVO columns, anomaly display)
-- [ ] 6.4 Add confirm carry-over action
-- [ ] 6.5 Add manual refund action
+- [x] 6.1 Create FinanceAttendViewModel (refund list, month/clazz filter, onlyRefund property)
+- [x] 6.2 Create finance_attend.fxml (month picker, class dropdown, onlyRefund checkbox, refund table)
+- [x] 6.3 Create FinanceAttendController (filter handlers, table setup with MonthAttendCarryOverVO columns, anomaly display)
+- [x] 6.4 Add confirm carry-over action
+- [x] 6.5 Add manual refund action
 
 ## 7. Subject Page (finance-subject)
 
-- [ ] 7.1 Create FinanceSubjectViewModel (subject list, type filter)
-- [ ] 7.2 Create finance_subject.fxml (type filter, subject table with expand rows)
-- [ ] 7.3 Create FinanceSubjectController (table setup with expandable rows, sub-table rendering)
-- [ ] 7.4 Create SubjectAddModal component (name, type radio, remind period, remark)
-- [ ] 7.5 Create SubjectEditModal component (pre-filled form)
-- [ ] 7.6 Create RefundSettingModal component (subject name, amount, unit)
-- [ ] 7.7 Create FeeScaleAddModal component (standardAmount, unit dropdown, name, remark)
-- [ ] 7.8 Add disable/remove subject actions
-- [ ] 7.9 Add rename/disable fee scale actions in sub-table
-- [ ] 7.10 Add batch charge action stub for fee scale rows
+- [x] 7.1 Create FinanceSubjectViewModel (subject list, type filter)
+- [x] 7.2 Create finance_subject.fxml (type filter, subject table with expand rows)
+- [x] 7.3 Create FinanceSubjectController (table setup with expandable rows, sub-table rendering)
+- [x] 7.4 Create SubjectAddModal component (name, type radio, remind period, remark)
+- [x] 7.5 Create SubjectEditModal component (pre-filled form)
+- [x] 7.6 Create RefundSettingModal component (subject name, amount, unit)
+- [x] 7.7 Create FeeScaleAddModal component (standardAmount, unit dropdown, name, remark)
+- [x] 7.8 Add disable/remove subject actions
+- [x] 7.9 Add rename/disable fee scale actions in sub-table
+- [x] 7.10 Add batch charge action stub for fee scale rows
 
 ## 8. Reports Page (finance-reports)
 
-- [ ] 8.1 Create FinanceReportsViewModel (summary data, subject reports, carry-over reports, payment reports, selected month)
-- [ ] 8.2 Create finance_reports.fxml (month picker, summary table, subject analysis table+chart, carry-over table+chart, payment table+chart)
-- [ ] 8.3 Create FinanceReportsController (data loading, chart rendering with BarChart/PieChart, dimension selector)
+- [x] 8.1 Create FinanceReportsViewModel (summary data, subject reports, carry-over reports, payment reports, selected month)
+- [x] 8.2 Create finance_reports.fxml (month picker, summary table, subject analysis table+chart, carry-over table+chart, payment table+chart)
+- [x] 8.3 Create FinanceReportsController (data loading, chart rendering with BarChart/PieChart, dimension selector)
 
 ## 9. Config Page (finance-config)
 
-- [ ] 9.1 Create FinanceConfigViewModel (config data, payment methods, bill number rule)
-- [ ] 9.2 Create finance_config.fxml (payment method section, bill number rule section, remind period section, attendance refund section with validate button)
-- [ ] 9.3 Create FinanceConfigController (load/save config, payment method CRUD, bill number rule save, validate account)
+- [x] 9.1 Create FinanceConfigViewModel (config data, payment methods, bill number rule)
+- [x] 9.2 Create finance_config.fxml (payment method section, bill number rule section, remind period section, attendance refund section with validate button)
+- [x] 9.3 Create FinanceConfigController (load/save config, payment method CRUD, bill number rule save, validate account)
 
 ## 10. Integration & Verification
 
-- [ ] 10.1 Compile and verify no errors (mvn compile)
+- [x] 10.1 Compile and verify no errors (mvn compile)
 - [ ] 10.2 Verify navigation to all 6 finance pages works
 - [ ] 10.3 Verify student account page loads dashboard and student list with real API data
 - [ ] 10.4 Verify charge modal opens and submits successfully
