@@ -102,7 +102,7 @@ public class FinanceAccountListViewModel extends ViewModelBase {
 
     public void loadClazzOptions() {
         executeAsync(
-            () -> studentService.listActiveClazz(schId).join(),
+            () -> studentService.listActiveClazz(null).join(),
             result -> clazzOptions.setAll(result),
             error -> ExceptionHandler.handle(error, "Failed to load clazz options")
         );

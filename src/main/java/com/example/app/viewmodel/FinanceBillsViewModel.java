@@ -144,9 +144,8 @@ public class FinanceBillsViewModel extends ViewModelBase {
     }
 
     public void loadClazzOptions() {
-        if (schId == null) return;
         executeAsync(
-            () -> AppContext.get().getService(com.example.app.service.StudentManageService.class).listActiveClazz(schId).join(),
+            () -> AppContext.get().getService(com.example.app.service.StudentManageService.class).listActiveClazz(null).join(),
             result -> clazzOptions.setAll(result),
             error -> ExceptionHandler.handle(error, "Failed to load clazz options")
         );
