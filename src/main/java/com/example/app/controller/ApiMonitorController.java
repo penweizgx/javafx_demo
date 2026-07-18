@@ -256,22 +256,18 @@ public class ApiMonitorController {
         logTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             viewModel.selectedLogProperty().set(newVal);
             showDetail(newVal);
-        });
-
-        viewModel.selectedLogProperty().isNotNull().addListener((obs, wasNotNull, isNotNull) -> {
-            if (isNotNull) {
+            if (newVal != null) {
                 if (!splitPane.getItems().contains(detailPanel)) {
                     splitPane.getItems().add(detailPanel);
                     splitPane.setDividerPositions(0.6);
                 }
-            } else {
-                splitPane.getItems().remove(detailPanel);
             }
         });
 
         closeDetailBtn.setOnAction(e -> {
             logTable.getSelectionModel().clearSelection();
             viewModel.selectedLogProperty().set(null);
+            showDetail(null);
             splitPane.getItems().remove(detailPanel);
         });
     }
