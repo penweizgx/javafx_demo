@@ -79,7 +79,7 @@ public class ApiMonitorController {
     private void buildDetailPanel() {
         detailPanel = new VBox(6);
         detailPanel.setMinWidth(280);
-        detailPanel.getStyleClass().add("detail-panel");
+        detailPanel.setStyle("-fx-padding: 8 12 8 12;");
 
         HBox header = new HBox(8);
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
@@ -149,7 +149,7 @@ public class ApiMonitorController {
         TextField field = new TextField();
         field.setEditable(false);
         field.setFocusTraversable(false);
-        field.getStyleClass().add("copyable-field");
+        field.setStyle("-fx-background-color: transparent; -fx-background-insets: 0; -fx-border-color: transparent; -fx-border-width: 0; -fx-border-insets: 0; -fx-padding: 2 4;");
         return field;
     }
 
