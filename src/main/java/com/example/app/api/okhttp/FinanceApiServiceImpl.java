@@ -3,29 +3,16 @@ package com.example.app.api.okhttp;
 import com.example.app.api.ApiException;
 import com.example.app.api.ApiUrl;
 import com.example.app.model.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
 
 @Slf4j
 public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
-
-    private final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Integer.class, new LenientIntegerAdapter())
-            .registerTypeAdapter(Long.class, new LenientLongAdapter())
-            .registerTypeAdapter(int.class, new LenientIntegerAdapter())
-            .registerTypeAdapter(long.class, new LenientLongAdapter())
-            .create();
 
     @Inject
     public FinanceApiServiceImpl() {
@@ -55,7 +42,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
             return Collections.emptyList();
         }
         Type listType = new TypeToken<List<FinAccountVO>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public FinAccountVO financeAccount(Long studentId) throws ApiException {
@@ -70,7 +57,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<BillTimeDTO>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public ChargeFormBuildDTO buildChargeForm(Long studentId) throws ApiException {
@@ -145,7 +132,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<MonthAttendCarryOverVO>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public void attendCarryOverBill(StudentMonthAttendDTO dto, String remark) throws ApiException {
@@ -164,7 +151,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyMap();
         Type mapType = new TypeToken<Map<String, String>>() {}.getType();
-        return gson.fromJson(resbody, mapType);
+        return getGson().fromJson(resbody, mapType);
     }
 
     public CarryOverConfig attendCarryOverConfig(Long subjectId) throws ApiException {
@@ -189,7 +176,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<SubjectWithFeeScaleDTO>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public void addSubject(SubjectDTO dto) throws ApiException {
@@ -259,7 +246,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyMap();
         Type mapType = new TypeToken<Map<String, ChargeReportItem>>() {}.getType();
-        return gson.fromJson(resbody, mapType);
+        return getGson().fromJson(resbody, mapType);
     }
 
     public List<ChargeSubjectReport> sumChargeSubjectReport(Long schId, String month) throws ApiException {
@@ -271,7 +258,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<ChargeSubjectReport>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public List<CarryOverSubjectReport> sumCarryOverSubjectReport(Long schId, String month) throws ApiException {
@@ -283,7 +270,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<CarryOverSubjectReport>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public List<PayChancelReport> countPayChancelReport(Long schId, String month) throws ApiException {
@@ -295,7 +282,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<PayChancelReport>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public FinanceConfig getConfig(Long schId) throws ApiException {
@@ -337,7 +324,7 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<PayChancel>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public void addPayChancel(Long schId, String name) throws ApiException {
@@ -362,11 +349,11 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         JsonElement resbody = extractResBodyJsonElement(response);
         if (resbody == null || resbody.isJsonNull()) return Collections.emptyMap();
         Type mapType = new TypeToken<Map<String, String>>() {}.getType();
-        return gson.fromJson(resbody, mapType);
+        return getGson().fromJson(resbody, mapType);
     }
 
     private JsonElement extractResBodyJsonElement(String responseContent) throws ApiException {
-        return gson.fromJson(responseContent, JsonElement.class)
+        return getGson().fromJson(responseContent, JsonElement.class)
                 .getAsJsonObject().get("resbody");
     }
 
@@ -409,41 +396,5 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         if (dto.getDisabled() != null) params.put("disabled", dto.getDisabled());
         if (dto.getRefund() != null) params.put("refund", dto.getRefund());
         return params;
-    }
-
-    private static class LenientIntegerAdapter extends TypeAdapter<Integer> {
-        @Override
-        public void write(JsonWriter out, Integer value) throws IOException {
-            if (value == null) out.nullValue();
-            else out.value(value);
-        }
-
-        @Override
-        public Integer read(JsonReader in) throws IOException {
-            try {
-                return in.nextInt();
-            } catch (NumberFormatException | IllegalStateException e) {
-                in.skipValue();
-                return null;
-            }
-        }
-    }
-
-    private static class LenientLongAdapter extends TypeAdapter<Long> {
-        @Override
-        public void write(JsonWriter out, Long value) throws IOException {
-            if (value == null) out.nullValue();
-            else out.value(value);
-        }
-
-        @Override
-        public Long read(JsonReader in) throws IOException {
-            try {
-                return in.nextLong();
-            } catch (NumberFormatException | IllegalStateException e) {
-                in.skipValue();
-                return null;
-            }
-        }
     }
 }

@@ -3,7 +3,6 @@ package com.example.app.api.okhttp;
 import com.example.app.api.ApiException;
 import com.example.app.api.ApiUrl;
 import com.example.app.model.*;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
@@ -15,8 +14,6 @@ import java.util.*;
 
 @Slf4j
 public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
-
-    private final Gson gson = new Gson();
 
     @Inject
     public StudentApiServiceImpl() {
@@ -31,7 +28,7 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
             return Collections.emptyList();
         }
         Type listType = new TypeToken<List<StudentVO>>() {}.getType();
-        List<StudentVO> students = gson.fromJson(resbody, listType);
+        List<StudentVO> students = getGson().fromJson(resbody, listType);
         log.info("Loaded {} students for clazz {}", students.size(), clazzId);
         return students;
     }
@@ -50,7 +47,7 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
             return Collections.emptyList();
         }
         Type listType = new TypeToken<List<StudentVO>>() {}.getType();
-        List<StudentVO> students = gson.fromJson(resbody, listType);
+        List<StudentVO> students = getGson().fromJson(resbody, listType);
         log.info("Loaded {} students by condition", students.size());
         return students;
     }
@@ -85,7 +82,7 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
             return Collections.emptyList();
         }
         Type listType = new TypeToken<List<ClazzStudentDTO>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public List<ClazzWithCountVO> listClazzWithCount(Long schId) throws ApiException {
@@ -99,7 +96,7 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
             return Collections.emptyList();
         }
         Type listType = new TypeToken<List<ClazzWithCountVO>>() {}.getType();
-        List<ClazzWithCountVO> result = gson.fromJson(resbody, listType);
+        List<ClazzWithCountVO> result = getGson().fromJson(resbody, listType);
         log.info("Loaded {} classes", result.size());
         return result;
     }
@@ -114,7 +111,7 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
             return Collections.emptyList();
         }
         Type listType = new TypeToken<List<ClazzOptionVO>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public List<ClazzDayAttendVO> countClazzDay(String day) throws ApiException {
@@ -127,7 +124,7 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
             return Collections.emptyList();
         }
         Type listType = new TypeToken<List<ClazzDayAttendVO>>() {}.getType();
-        return gson.fromJson(resbody, listType);
+        return getGson().fromJson(resbody, listType);
     }
 
     public ClazzStudentMonthAttendVO listMonthAttend(Long clazzId, String month) throws ApiException {
@@ -139,7 +136,7 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
     }
 
     private JsonElement extractResBodyJsonElement(String responseContent) throws ApiException {
-        return gson.fromJson(responseContent, JsonElement.class)
+        return getGson().fromJson(responseContent, JsonElement.class)
                 .getAsJsonObject().get("resbody");
     }
 

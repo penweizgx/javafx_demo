@@ -6,9 +6,13 @@ import com.example.app.api.okhttp.executor.JsonPostRequestExecutor;
 import com.example.app.api.storage.ConfigStorage;
 import com.example.app.model.User;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +25,17 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
     protected ConfigStorage configStorage;
     private static final int retrySleepMillis = 1000;
     private static final int maxRetryTimes = 5;
+
+    private static final Gson lenientGson = new GsonBuilder()
+            .registerTypeAdapter(Integer.class, new LenientIntegerAdapter())
+            .registerTypeAdapter(Long.class, new LenientLongAdapter())
+            .registerTypeAdapter(int.class, new LenientIntegerAdapter())
+            .registerTypeAdapter(long.class, new LenientLongAdapter())
+            .create();
+
+    protected Gson getGson() {
+        return lenientGson;
+    }
 
     @Inject
     public void setConfigStorage(ConfigStorage configStorage) {
@@ -113,7 +128,7 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
         if (resbody == null || resbody.isJsonNull()) {
             throw new ApiException("响应数据为空");
         }
-        return new Gson().fromJson(resbody, beanClass);
+        return getGson().fromJson(resbody, beanClass);
     }
 
     protected <T> T extractResBodyAs(String responseContent, Type targetType) throws ApiException {
@@ -122,7 +137,7 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
         if (resbody == null || resbody.isJsonNull()) {
             throw new ApiException("响应数据为空");
         }
-        return new Gson().fromJson(resbody, targetType);
+        return getGson().fromJson(resbody, targetType);
     }
 
     private JsonObject parseEnvelope(String responseContent) throws ApiException {
@@ -149,6 +164,42 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
     public User getCurrentUser() throws ApiException {
         String response = (String) this.get(ApiUrl.Authenticate.CURRENT_USER.getUrl(configStorage));
         JsonObject jsonObject = extractResBody(response);
-        return new Gson().fromJson(jsonObject, User.class);
+        return getGson().fromJson(jsonObject, User.class);
+    }
+
+    private static class LenientIntegerAdapter extends TypeAdapter<Integer> {
+        @Override
+        public void write(JsonWriter out, Integer value) throws IOException {
+            if (value == null) out.nullValue();
+            else out.value(value);
+        }
+
+        @Override
+        public Integer read(JsonReader in) throws IOException {
+            try {
+                return in.nextInt();
+            } catch (NumberFormatException | IllegalStateException e) {
+                in.skipValue();
+                return null;
+            }
+        }
+    }
+
+    private static class LenientLongAdapter extends TypeAdapter<Long> {
+        @Override
+        public void write(JsonWriter out, Long value) throws IOException {
+            if (value == null) out.nullValue();
+            else out.value(value);
+        }
+
+        @Override
+        public Long read(JsonReader in) throws IOException {
+            try {
+                return in.nextLong();
+            } catch (NumberFormatException | IllegalStateException e) {
+                in.skipValue();
+                return null;
+            }
+        }
     }
 }

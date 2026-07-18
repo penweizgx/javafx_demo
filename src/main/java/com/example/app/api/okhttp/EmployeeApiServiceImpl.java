@@ -6,7 +6,6 @@ import com.example.app.model.Employee;
 import com.example.app.model.EmployeeListReq;
 import com.example.app.model.PageResult;
 import com.example.app.utils.GsonUtils;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,14 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 员工模块ApiServiceImpl - 继承OkHttpApiServiceImpl复用HTTP基础设施。
- * 使用父类的get()方法发起请求，extractResBodyAs()解析响应。
- */
 @Slf4j
 public class EmployeeApiServiceImpl extends OkHttpApiServiceImpl {
-
-    private final Gson gson = new Gson();
 
     @Inject
     public EmployeeApiServiceImpl() {
@@ -81,7 +74,7 @@ public class EmployeeApiServiceImpl extends OkHttpApiServiceImpl {
     }
 
     private JsonElement extractResBodyJsonElement(String responseContent) throws ApiException {
-        JsonObject jsonObject = gson.fromJson(responseContent, JsonObject.class);
+        JsonObject jsonObject = getGson().fromJson(responseContent, JsonObject.class);
         if (jsonObject.has("code") && jsonObject.get("code").getAsInt() != 200) {
             String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "未知错误";
             throw new ApiException(message, jsonObject.get("code").getAsInt());
