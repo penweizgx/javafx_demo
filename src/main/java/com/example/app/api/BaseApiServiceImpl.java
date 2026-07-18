@@ -4,9 +4,13 @@ import com.example.app.api.okhttp.executor.FormPostRequestExecutor;
 import com.example.app.api.okhttp.executor.SimpleGetRequestExecutor;
 import com.example.app.api.okhttp.executor.JsonPostRequestExecutor;
 import com.example.app.api.storage.ConfigStorage;
+import com.example.app.model.DatePeriod;
+import com.example.app.model.InvalidBill;
 import com.example.app.model.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
@@ -31,6 +35,8 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
             .registerTypeAdapter(Long.class, new LenientLongAdapter())
             .registerTypeAdapter(int.class, new LenientIntegerAdapter())
             .registerTypeAdapter(long.class, new LenientLongAdapter())
+            .registerTypeAdapter(InvalidBill.class, new LenientObjectDeserializer<>(InvalidBill.class))
+            .registerTypeAdapter(DatePeriod.class, new LenientObjectDeserializer<>(DatePeriod.class))
             .create();
 
     protected Gson getGson() {
@@ -200,6 +206,22 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
                 in.skipValue();
                 return null;
             }
+        }
+    }
+
+    private static class LenientObjectDeserializer<T> implements JsonDeserializer<T> {
+        private final Class<T> clazz;
+
+        LenientObjectDeserializer(Class<T> clazz) {
+            this.clazz = clazz;
+        }
+
+        @Override
+        public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+            if (json == null || json.isJsonNull() || !json.isJsonObject()) {
+                return null;
+            }
+            return new Gson().fromJson(json, clazz);
         }
     }
 }
