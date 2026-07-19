@@ -146,6 +146,21 @@ public abstract class BaseApiServiceImpl<H, P> implements ApiService, RequestHtt
         return getGson().fromJson(resbody, targetType);
     }
 
+    protected <T> T extractResBodyAsNullable(String responseContent, Type targetType) throws ApiException {
+        JsonObject jsonObject = parseEnvelope(responseContent);
+        JsonElement resbody = jsonObject.get("resbody");
+        if (resbody == null || resbody.isJsonNull()) {
+            return null;
+        }
+        return getGson().fromJson(resbody, targetType);
+    }
+
+    protected JsonElement extractResBodyElement(String responseContent) throws ApiException {
+        JsonObject jsonObject = parseEnvelope(responseContent);
+        JsonElement resbody = jsonObject.get("resbody");
+        return (resbody == null || resbody.isJsonNull()) ? null : resbody;
+    }
+
     private JsonObject parseEnvelope(String responseContent) throws ApiException {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(responseContent, JsonObject.class);

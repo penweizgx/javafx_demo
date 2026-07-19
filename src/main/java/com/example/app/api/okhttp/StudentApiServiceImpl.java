@@ -3,8 +3,6 @@ package com.example.app.api.okhttp;
 import com.example.app.api.ApiException;
 import com.example.app.api.ApiUrl;
 import com.example.app.model.*;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +21,10 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
     public List<StudentVO> listWithClazz(Long clazzId) throws ApiException {
         String url = ApiUrl.Student.LIST_WITH_CLAZZ.getUrl(configStorage) + "/" + clazzId;
         String response = (String) this.get(url);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) {
-            return Collections.emptyList();
-        }
         Type listType = new TypeToken<List<StudentVO>>() {}.getType();
-        List<StudentVO> students = getGson().fromJson(resbody, listType);
-        log.info("Loaded {} students for clazz {}", students.size(), clazzId);
-        return students;
+        List<StudentVO> students = extractResBodyAsNullable(response, listType);
+        log.info("Loaded {} students for clazz {}", students != null ? students.size() : 0, clazzId);
+        return students != null ? students : Collections.emptyList();
     }
 
     public List<StudentVO> listByCondition(StudentQO qo) throws ApiException {
@@ -42,14 +36,10 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
 
         String url = ApiUrl.Student.LIST_BY_CONDITION.getUrl(configStorage);
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) {
-            return Collections.emptyList();
-        }
         Type listType = new TypeToken<List<StudentVO>>() {}.getType();
-        List<StudentVO> students = getGson().fromJson(resbody, listType);
-        log.info("Loaded {} students by condition", students.size());
-        return students;
+        List<StudentVO> students = extractResBodyAsNullable(response, listType);
+        log.info("Loaded {} students by condition", students != null ? students.size() : 0);
+        return students != null ? students : Collections.emptyList();
     }
 
     public StudentVO detail(Long id) throws ApiException {
@@ -77,12 +67,9 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
         if (schId != null) queryParams.put("schId", schId);
         String url = ApiUrl.Student.GROUP_CLAZZ_STUDENT.getUrl(configStorage);
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) {
-            return Collections.emptyList();
-        }
         Type listType = new TypeToken<List<ClazzStudentDTO>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<ClazzStudentDTO> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public List<ClazzWithCountVO> listClazzWithCount(Long schId) throws ApiException {
@@ -91,14 +78,10 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
         if (schId != null) queryParams.put("schId", schId);
         String url = ApiUrl.Org.CLAZZ_LIST_WITH_COUNT.getUrl(configStorage);
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) {
-            return Collections.emptyList();
-        }
         Type listType = new TypeToken<List<ClazzWithCountVO>>() {}.getType();
-        List<ClazzWithCountVO> result = getGson().fromJson(resbody, listType);
-        log.info("Loaded {} classes", result.size());
-        return result;
+        List<ClazzWithCountVO> result = extractResBodyAsNullable(response, listType);
+        log.info("Loaded {} classes", result != null ? result.size() : 0);
+        return result != null ? result : Collections.emptyList();
     }
 
     public List<ClazzOptionVO> listActiveClazz(Long schId) throws ApiException {
@@ -106,12 +89,9 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
         if (schId != null) queryParams.put("schId", schId);
         String url = ApiUrl.Org.CLAZZ_LIST_ACTIVE.getUrl(configStorage);
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) {
-            return Collections.emptyList();
-        }
         Type listType = new TypeToken<List<ClazzOptionVO>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<ClazzOptionVO> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public List<ClazzDayAttendVO> countClazzDay(String day) throws ApiException {
@@ -119,12 +99,9 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
         if (day != null) queryParams.put("day", day);
         String url = ApiUrl.Attend.COUNT_CLAZZ_DAY.getUrl(configStorage);
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) {
-            return Collections.emptyList();
-        }
         Type listType = new TypeToken<List<ClazzDayAttendVO>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<ClazzDayAttendVO> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public ClazzStudentMonthAttendVO listMonthAttend(Long clazzId, String month) throws ApiException {
@@ -133,11 +110,6 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
         String url = ApiUrl.Attend.LIST_MONTH_ATTEND_STUDENT.getUrl(configStorage) + "/" + clazzId;
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
         return extractResBodyAs(response, ClazzStudentMonthAttendVO.class);
-    }
-
-    private JsonElement extractResBodyJsonElement(String responseContent) throws ApiException {
-        return getGson().fromJson(responseContent, JsonElement.class)
-                .getAsJsonObject().get("resbody");
     }
 
     private Map<String, Object> toParamMap(StudentFO fo) {

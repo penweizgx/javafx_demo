@@ -35,14 +35,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         if (qo.getIncludeGraduated() != null) queryParams.put("includeGraduated", qo.getIncludeGraduated());
         String url = ApiUrl.Finance.LIST_BY_CONDITION.getUrl(configStorage);
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
-        if (!resbody.isJsonArray()) {
-            log.warn("listByCondition resbody is not an array: {}", resbody);
-            return Collections.emptyList();
-        }
         Type listType = new TypeToken<List<FinAccountVO>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<FinAccountVO> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public FinAccountVO financeAccount(Long studentId) throws ApiException {
@@ -54,10 +49,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
     public List<BillTimeDTO> chargeBills(Long studentId) throws ApiException {
         String url = ApiUrl.Finance.CHARGE_BILLS.getUrl(configStorage) + "/" + studentId;
         String response = (String) this.get(url);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<BillTimeDTO>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<BillTimeDTO> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public ChargeFormBuildDTO buildChargeForm(Long studentId) throws ApiException {
@@ -70,11 +64,8 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         Map<String, Object> params = toChargeBillParamMap(dto);
         String url = ApiUrl.Finance.CHARGE.getUrl(configStorage);
         String response = (String) this.postJSON(url, params);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody != null && !resbody.isJsonNull()) {
-            return resbody.getAsLong();
-        }
-        return null;
+        JsonElement resbody = extractResBodyElement(response);
+        return resbody != null ? resbody.getAsLong() : null;
     }
 
     public void feeScaleBind(Long studentId, List<Long> ids) throws ApiException {
@@ -129,10 +120,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         queryParams.put("onlyrefund", onlyrefund);
         String url = ApiUrl.Finance.LIST_MONTH_ATTEND_CARRY_OVER.getUrl(configStorage);
         String response = (String) this.get(url, queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<MonthAttendCarryOverVO>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<MonthAttendCarryOverVO> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public void attendCarryOverBill(StudentMonthAttendDTO dto, String remark) throws ApiException {
@@ -148,10 +138,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         Map<String, Object> params = new HashMap<>();
         params.put("items", items);
         String response = (String) this.postJSON(url, params);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyMap();
         Type mapType = new TypeToken<Map<String, String>>() {}.getType();
-        return getGson().fromJson(resbody, mapType);
+        Map<String, String> result = extractResBodyAsNullable(response, mapType);
+        return result != null ? result : Collections.emptyMap();
     }
 
     public CarryOverConfig attendCarryOverConfig(Long subjectId) throws ApiException {
@@ -173,10 +162,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
     public List<SubjectWithFeeScaleDTO> listSubjectWithFeeScale() throws ApiException {
         String url = ApiUrl.Finance.SUBJECT_LIST.getUrl(configStorage);
         String response = (String) this.get(url);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<SubjectWithFeeScaleDTO>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<SubjectWithFeeScaleDTO> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public void addSubject(SubjectDTO dto) throws ApiException {
@@ -243,10 +231,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         queryParams.put("month", month);
         String url = ApiUrl.Finance.COUNT_CHARGE_REPORT.getUrl(configStorage);
         String response = (String) this.get(url, queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyMap();
         Type mapType = new TypeToken<Map<String, ChargeReportItem>>() {}.getType();
-        return getGson().fromJson(resbody, mapType);
+        Map<String, ChargeReportItem> result = extractResBodyAsNullable(response, mapType);
+        return result != null ? result : Collections.emptyMap();
     }
 
     public List<ChargeSubjectReport> sumChargeSubjectReport(Long schId, String month) throws ApiException {
@@ -255,10 +242,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         queryParams.put("month", month);
         String url = ApiUrl.Finance.SUM_CHARGE_SUBJECT_REPORT.getUrl(configStorage);
         String response = (String) this.get(url, queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<ChargeSubjectReport>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<ChargeSubjectReport> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public List<CarryOverSubjectReport> sumCarryOverSubjectReport(Long schId, String month) throws ApiException {
@@ -267,10 +253,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         queryParams.put("month", month);
         String url = ApiUrl.Finance.SUM_CARRY_OVER_SUBJECT_REPORT.getUrl(configStorage);
         String response = (String) this.get(url, queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<CarryOverSubjectReport>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<CarryOverSubjectReport> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public List<PayChancelReport> countPayChancelReport(Long schId, String month) throws ApiException {
@@ -279,10 +264,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         queryParams.put("month", month);
         String url = ApiUrl.Finance.COUNT_PAY_CHANCEL_REPORT.getUrl(configStorage);
         String response = (String) this.get(url, queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<PayChancelReport>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<PayChancelReport> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public FinanceConfig getConfig(Long schId) throws ApiException {
@@ -321,10 +305,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         queryParams.put("schId", schId);
         String url = ApiUrl.Finance.PAY_CHANCELS_LIST.getUrl(configStorage);
         String response = (String) this.get(url, queryParams);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyList();
         Type listType = new TypeToken<List<PayChancel>>() {}.getType();
-        return getGson().fromJson(resbody, listType);
+        List<PayChancel> result = extractResBodyAsNullable(response, listType);
+        return result != null ? result : Collections.emptyList();
     }
 
     public void addPayChancel(Long schId, String name) throws ApiException {
@@ -346,15 +329,9 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
     public Map<String, String> validate() throws ApiException {
         String url = ApiUrl.Finance.VALIDATE.getUrl(configStorage);
         String response = (String) this.get(url);
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) return Collections.emptyMap();
         Type mapType = new TypeToken<Map<String, String>>() {}.getType();
-        return getGson().fromJson(resbody, mapType);
-    }
-
-    private JsonElement extractResBodyJsonElement(String responseContent) throws ApiException {
-        return getGson().fromJson(responseContent, JsonElement.class)
-                .getAsJsonObject().get("resbody");
+        Map<String, String> result = extractResBodyAsNullable(response, mapType);
+        return result != null ? result : Collections.emptyMap();
     }
 
     private Map<String, Object> toChargeBillParamMap(ChargeBillDTO dto) {

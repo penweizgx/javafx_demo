@@ -5,10 +5,10 @@ import com.example.app.api.ApiUrl;
 import com.example.app.model.Employee;
 import com.example.app.model.EmployeeListReq;
 import com.example.app.model.PageResult;
-import com.example.app.utils.GsonUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,8 +38,8 @@ public class EmployeeApiServiceImpl extends OkHttpApiServiceImpl {
         String url = ApiUrl.Employee.LIST.getUrl(configStorage);
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
 
-        JsonElement resbody = extractResBodyJsonElement(response);
-        if (resbody == null || resbody.isJsonNull()) {
+        JsonElement resbody = extractResBodyElement(response);
+        if (resbody == null) {
             throw new ApiException("员工列表响应数据为空");
         }
 
@@ -73,37 +73,21 @@ public class EmployeeApiServiceImpl extends OkHttpApiServiceImpl {
         return result;
     }
 
-    private JsonElement extractResBodyJsonElement(String responseContent) throws ApiException {
-        JsonObject jsonObject = getGson().fromJson(responseContent, JsonObject.class);
-        if (jsonObject.has("code") && jsonObject.get("code").getAsInt() != 200) {
-            String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "未知错误";
-            throw new ApiException(message, jsonObject.get("code").getAsInt());
-        }
-        return jsonObject.get("resbody");
-    }
-
-    /**
-     * 将嵌套的EmployeeDTO JsonObject映射为扁平的Employee bean
-     */
     private Employee mapEmployeeDTOtoEmployee(JsonObject dto) {
         Employee emp = new Employee();
 
-        // id
         if (dto.has("id") && !dto.get("id").isJsonNull()) {
             emp.setId(dto.get("id").getAsLong());
         }
 
-        // phone
         if (dto.has("phone") && !dto.get("phone").isJsonNull()) {
             emp.setPhone(dto.get("phone").getAsString());
         }
 
-        // email
         if (dto.has("email") && !dto.get("email").isJsonNull()) {
             emp.setEmail(dto.get("email").getAsString());
         }
 
-        // name - nested PersonName object
         if (dto.has("name") && dto.get("name").isJsonObject()) {
             JsonObject nameObj = dto.getAsJsonObject("name");
             if (nameObj.has("name") && !nameObj.get("name").isJsonNull()) {
@@ -113,13 +97,11 @@ public class EmployeeApiServiceImpl extends OkHttpApiServiceImpl {
             emp.setName(dto.get("name").getAsString());
         }
 
-        // sex - integer: 1=男, 2=女, 0=未知
         if (dto.has("sex") && !dto.get("sex").isJsonNull()) {
             int sex = dto.get("sex").getAsInt();
             emp.setGender(sex == 1 ? "男" : sex == 2 ? "女" : "");
         }
 
-        // bornDate - nested BirthdayDate object
         if (dto.has("bornDate") && dto.get("bornDate").isJsonObject()) {
             JsonObject bornObj = dto.getAsJsonObject("bornDate");
             if (bornObj.has("date") && !bornObj.get("date").isJsonNull()) {
@@ -127,7 +109,6 @@ public class EmployeeApiServiceImpl extends OkHttpApiServiceImpl {
             }
         }
 
-        // period - DatePeriod object contains hire date
         if (dto.has("period") && dto.get("period").isJsonObject()) {
             JsonObject periodObj = dto.getAsJsonObject("period");
             if (periodObj.has("fromDate") && !periodObj.get("fromDate").isJsonNull()) {
@@ -135,13 +116,11 @@ public class EmployeeApiServiceImpl extends OkHttpApiServiceImpl {
             }
         }
 
-        // active - boolean
         if (dto.has("active") && !dto.get("active").isJsonNull()) {
             boolean active = dto.get("active").getAsBoolean();
             emp.setStatus(active ? 1 : 0);
         }
 
-        // orgName - not in EmployeeDTO, use empty string
         emp.setOrgName("");
 
         return emp;
