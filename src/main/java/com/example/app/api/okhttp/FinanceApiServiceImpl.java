@@ -1,5 +1,6 @@
 package com.example.app.api.okhttp;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.example.app.api.ApiException;
 import com.example.app.api.ApiUrl;
 import com.example.app.model.*;
@@ -61,9 +62,8 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
     }
 
     public Long charge(ChargeBillDTO dto) throws ApiException {
-        Map<String, Object> params = toChargeBillParamMap(dto);
         String url = ApiUrl.Finance.CHARGE.getUrl(configStorage);
-        String response = (String) this.postJSON(url, params);
+        String response = (String) this.postJSON(url, BeanUtil.beanToMap(dto, false, true));
         JsonElement resbody = extractResBodyElement(response);
         return resbody != null ? resbody.getAsLong() : null;
     }
@@ -84,9 +84,8 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
     }
 
     public PaginationBillTimeDTO listBills(FilterBillsPage filter) throws ApiException {
-        Map<String, Object> params = toFilterBillsParamMap(filter);
         String url = ApiUrl.Finance.BILLS_LIST.getUrl(configStorage);
-        String response = (String) this.postJSON(url, params);
+        String response = (String) this.postJSON(url, BeanUtil.beanToMap(filter, false, true));
         return extractResBodyAs(response, PaginationBillTimeDTO.class);
     }
 
@@ -168,15 +167,13 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
     }
 
     public void addSubject(SubjectDTO dto) throws ApiException {
-        Map<String, Object> params = toSubjectDTOParamMap(dto);
         String url = ApiUrl.Finance.SUBJECT_ADD.getUrl(configStorage);
-        this.post(url, params);
+        this.post(url, BeanUtil.beanToMap(dto, false, true));
     }
 
     public void editSubject(SubjectDTO dto) throws ApiException {
-        Map<String, Object> params = toSubjectDTOParamMap(dto);
         String url = ApiUrl.Finance.SUBJECT_EDIT.getUrl(configStorage);
-        this.post(url, params);
+        this.post(url, BeanUtil.beanToMap(dto, false, true));
     }
 
     public void disableSubject(Long id) throws ApiException {
@@ -334,44 +331,4 @@ public class FinanceApiServiceImpl extends OkHttpApiServiceImpl {
         return result != null ? result : Collections.emptyMap();
     }
 
-    private Map<String, Object> toChargeBillParamMap(ChargeBillDTO dto) {
-        Map<String, Object> params = new HashMap<>();
-        if (dto.getStudentId() != null) params.put("studentId", dto.getStudentId());
-        if (dto.getTotalAmount() != null) params.put("totalAmount", dto.getTotalAmount());
-        if (dto.getPayAmount() != null) params.put("payAmount", dto.getPayAmount());
-        if (dto.getDeductionAmount() != null) params.put("deductionAmount", dto.getDeductionAmount());
-        if (dto.getBizDate() != null) params.put("bizDate", dto.getBizDate());
-        if (dto.getPayUserId() != null) params.put("payUserId", dto.getPayUserId());
-        if (dto.getPayUserName() != null) params.put("payUserName", dto.getPayUserName());
-        if (dto.getRemark() != null) params.put("remark", dto.getRemark());
-        if (dto.getSubjectItems() != null) params.put("subjectItems", dto.getSubjectItems());
-        if (dto.getPayChancels() != null) params.put("payChancels", dto.getPayChancels());
-        return params;
-    }
-
-    private Map<String, Object> toFilterBillsParamMap(FilterBillsPage filter) {
-        Map<String, Object> params = new HashMap<>();
-        if (filter.getCurrent() != null) params.put("current", filter.getCurrent());
-        if (filter.getPageSize() != null) params.put("pageSize", filter.getPageSize());
-        if (filter.getSearchWord() != null) params.put("searchWord", filter.getSearchWord());
-        if (filter.getSchId() != null) params.put("schId", filter.getSchId());
-        if (filter.getClazzId() != null) params.put("clazzId", filter.getClazzId());
-        if (filter.getPeriod() != null) params.put("period", filter.getPeriod());
-        if (filter.getBillType() != null) params.put("billType", filter.getBillType());
-        if (filter.getFilterInvalid() != null) params.put("filterInvalid", filter.getFilterInvalid());
-        return params;
-    }
-
-    private Map<String, Object> toSubjectDTOParamMap(SubjectDTO dto) {
-        Map<String, Object> params = new HashMap<>();
-        if (dto.getId() != null) params.put("id", dto.getId());
-        if (dto.getName() != null) params.put("name", dto.getName());
-        if (dto.getType() != null) params.put("type", dto.getType());
-        if (dto.getDay() != null) params.put("day", dto.getDay());
-        if (dto.getAlloc() != null) params.put("alloc", dto.getAlloc());
-        if (dto.getRemark() != null) params.put("remark", dto.getRemark());
-        if (dto.getDisabled() != null) params.put("disabled", dto.getDisabled());
-        if (dto.getRefund() != null) params.put("refund", dto.getRefund());
-        return params;
-    }
 }

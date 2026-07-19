@@ -1,5 +1,6 @@
 package com.example.app.api.okhttp;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.example.app.api.ApiException;
 import com.example.app.api.ApiUrl;
 import com.example.app.model.*;
@@ -49,16 +50,14 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
     }
 
     public void create(StudentFO fo) throws ApiException {
-        Map<String, Object> params = toParamMap(fo);
         String url = ApiUrl.Student.CREATE.getUrl(configStorage);
-        this.postJSON(url, params);
+        this.postJSON(url, BeanUtil.beanToMap(fo, false, true));
         log.info("Created student: {}", fo.getName());
     }
 
     public void change(StudentFO fo) throws ApiException {
-        Map<String, Object> params = toParamMap(fo);
         String url = ApiUrl.Student.CHANGE.getUrl(configStorage);
-        this.postJSON(url, params);
+        this.postJSON(url, BeanUtil.beanToMap(fo, false, true));
         log.info("Changed student: {}", fo.getName());
     }
 
@@ -110,24 +109,5 @@ public class StudentApiServiceImpl extends OkHttpApiServiceImpl {
         String url = ApiUrl.Attend.LIST_MONTH_ATTEND_STUDENT.getUrl(configStorage) + "/" + clazzId;
         String response = (String) this.get(url, queryParams.isEmpty() ? null : queryParams);
         return extractResBodyAs(response, ClazzStudentMonthAttendVO.class);
-    }
-
-    private Map<String, Object> toParamMap(StudentFO fo) {
-        Map<String, Object> params = new HashMap<>();
-        if (fo.getId() != null) params.put("id", fo.getId());
-        if (fo.getName() != null) params.put("name", fo.getName());
-        if (fo.getNickname() != null) params.put("nickname", fo.getNickname());
-        if (fo.getAvatar() != null) params.put("avatar", fo.getAvatar());
-        if (fo.getSex() != null) params.put("sex", fo.getSex());
-        if (fo.getClazzId() != null) params.put("clazzId", fo.getClazzId());
-        if (fo.getBornDate() != null) params.put("bornDate", fo.getBornDate());
-        if (fo.getAddress() != null) params.put("address", fo.getAddress());
-        if (fo.getDanger() != null) params.put("danger", fo.getDanger());
-        if (fo.getRegDate() != null) params.put("regDate", fo.getRegDate());
-        if (fo.getPhone() != null) params.put("phone", fo.getPhone());
-        if (fo.getPid() != null) params.put("pid", fo.getPid());
-        if (fo.getPname() != null) params.put("pname", fo.getPname());
-        if (fo.getPrelationship() != null) params.put("prelationship", fo.getPrelationship());
-        return params;
     }
 }
