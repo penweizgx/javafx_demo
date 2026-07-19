@@ -143,6 +143,11 @@
             <artifactId>hutool-all</artifactId>
             <version>5.8.44</version>
         </dependency>
+        <dependency>
+            <groupId>net.synedra</groupId>
+            <artifactId>validatorfx</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

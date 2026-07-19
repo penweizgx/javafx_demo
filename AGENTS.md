@@ -40,6 +40,50 @@ mvn javafx:run               # 运行应用
   - 例如：用户详情页的"基本信息"、"操作记录"等Tab项
 - **路由注册**: 所有节点都会注册到路由系统，不受 `showInNav` 影响
 
+## 表单验证规范
+- **统一使用 ValidatorFX**: 项目已引入 `validatorfx` 依赖（`net.synedra:validatorfx:1.0.0`），所有表单验证必须使用此框架
+- **禁止**: 不得在 ViewModel 中手写 if-else 验证逻辑，不得使用旧的 `FieldValidator`/`FormValidator`
+- **架构分层**:
+  - **ViewModel 层**: 持有 `Validator` 实例，定义 Check 规则（`dependsOn` + `withMethod`），暴露 `validator.containsErrorsProperty()` 供 Controller 绑定
+  - **Controller 层**: 调用 `validator.createCheck().decorates(node)` 绑定视觉装饰，绑定按钮禁用状态
+- **基本用法**:
+  ```java
+  // ViewModel 中
+  Validator validator = new Validator();
+  validator.createCheck()
+      .dependsOn("name", nameProperty)
+      .withMethod(c -> {
+          String name = c.get("name");
+          if (name == null || name.isBlank()) c.error("名称不能为空");
+      });
+  // 暴露给 Controller
+  public Validator getValidator() { return validator; }
+  public BooleanBinding validProperty() { return validator.containsErrorsProperty().not(); }
+
+  // Controller 中
+  viewModel.getValidator().createCheck()
+      .dependsOn("name", nameField.textProperty())
+      .withMethod(c -> { /* 同上规则，或复用VM的Check */ })
+      .decorates(nameField)
+      .immediate();
+  saveBtn.disableProperty().bind(viewModel.getValidator().containsErrorsProperty());
+  ```
+- **验证时机**:
+  - 需即时反馈的字段使用 `.immediate()`
+  - 提交时验证使用 `validator.validate()` 手动触发
+  - 首次输入清除错误可使用 `.immediateClear()`
+- **跨字段验证**: 一个 Check 可 `dependsOn` 多个 Property
+  ```java
+  validator.createCheck()
+      .dependsOn("password", passwordProperty)
+      .dependsOn("confirm", confirmProperty)
+      .withMethod(c -> {
+          if (!c.get("password").equals(c.get("confirm"))) c.error("两次密码不一致");
+      });
+  ```
+- **装饰器自定义**: 使用 `DefaultDecoration.setFactory()` 适配 AtlantaFX 样式，避免默认装饰与主题冲突
+- **禁用按钮提示**: 使用 `TooltipWrapper` 包裹提交按钮，hover 时显示验证错误原因
+
 ## Git 版本控制
 - **每次代码变更后必须提交git**，便于版本回退
 - 提交前先编译验证（`mvn compile`），确保代码无编译错误
